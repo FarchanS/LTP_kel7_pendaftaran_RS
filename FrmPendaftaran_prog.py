@@ -11,9 +11,6 @@ from FrmUser_prog import *
 from FrmLogin import *
 from FrmLogin_prog import *
 
-phone_pasien="+6281"
-phone_dokter="+6282"
-
 def signals(self):
     self.PB_Cari.clicked.connect(self.Cari)
     self.PB_Submit.clicked.connect(self.Submit)
@@ -34,7 +31,6 @@ def pesan(self, ikon, judul, isipesan):
         msgBox.exec()
 
 def Cari(self):
-    global phone_pasien
 
     try:
         con = mdb.connect('localhost','root','','ltp_final_project1_db')
@@ -59,7 +55,6 @@ def Cari(self):
             tanggalan=QDate(result[0][4]).toPyDate()
             self.Cal_TanggalLahir.setSelectedDate(tanggalan)
             self.Txt_Phone.setText(result[0][6])
-            phone_pasien=self.Txt_Phone.text()
             if (result[0][7] == "Kawin"):
                 self.Opt_Kawin.setChecked(True)
             else:
@@ -99,8 +94,6 @@ def DisplayDokter(self):
         self.Txt_PhoneDokter.setText("")
 
 def DisplayDetailDokter(self):
-    global phone_dokter
-
     NamaDokter = self.Cmb_NamaDr.currentText()
 
     try:
@@ -137,7 +130,6 @@ def DisplayDetailDokter(self):
             self.Time7_Tutup.setTime(QTime(0,0))
         else:
             self.Txt_PhoneDokter.setText(result[0][2])
-            phone_dokter=self.Txt_PhoneDokter.text()
             self.Chk_Senin.setChecked(result[0][4])
             self.Time1_Buka.setTime(QTime(int(JamBuka(result[0][5])), int(MinBuka(result[0][5]))))
             self.Time1_Tutup.setTime(QTime(int(JamTutup(result[0][6])), int(MinTutup(result[0][6]))))
@@ -185,9 +177,6 @@ def DisplayDetailDokter(self):
         self.Time7_Tutup.setTime(QTime(0,0))
 
 def Submit(self):
-    global phone_pasien
-    global phone_dokter
-    
     pass
 
 def Pasien(self):
