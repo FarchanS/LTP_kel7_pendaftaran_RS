@@ -11,7 +11,6 @@ def signals(self):
     self.PB_add.clicked.connect(self.InsertData)
     self.PB_update.clicked.connect(self.UpdateData)
     self.PB_del.clicked.connect(self.DeleteData)
-    # self.PB_exit.clicked.connect(self.keluar)
     self.Txt_KTP.textChanged.connect(self.select_data)
 
 def pesan(self, ikon, judul, isipesan):
