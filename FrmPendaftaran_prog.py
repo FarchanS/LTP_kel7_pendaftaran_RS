@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import * 
 import MySQLdb as mdb
+import sys
 from FrmPendaftaran import *
 from FrmPasien import *
 from FrmPasien_prog import *
@@ -9,7 +10,7 @@ from FrmDokter_prog import *
 from FrmUser import *
 from FrmUser_prog import *
 from FrmLogin import *
-from FrmLogin_prog import *
+# from FrmLogin_prog import *
 
 def signals(self):
     self.PB_Cari.clicked.connect(self.Cari)
@@ -21,6 +22,41 @@ def signals(self):
     self.PB_Logout.clicked.connect(self.Logout)
     self.Cmb_Bidang.currentTextChanged.connect(self.DisplayDokter)
     self.Cmb_NamaDr.currentTextChanged.connect(self.DisplayDetailDokter)
+
+def login_signals(self):
+    self.PB_login.clicked.connect(self.login)
+
+def login(self):
+    try:
+        username = self.Txt_username.text()
+        password = self.Txt_password.text()
+
+        con = mdb.connect('localhost','root','','ltp_final_project1_db')
+
+        cur = con.cursor()
+        cur.execute("SELECT * from users where Nama like '"+username + "'and Password like '"+password+"'")
+        result = cur.fetchone()
+
+        if result == None:
+            pesan(self, QMessageBox.Information,"Failed to Login","Incorrect Email & Password")
+
+        else:
+            # self.FrmPendaftaran = QtWidgets.QMainWindow()
+            # self.ui_pendaftaran = Ui_FrmPendaftaran()
+            # self.ui_pendaftaran.setupUi(self.FrmPendaftaran)
+            # self.ui_pendaftaran.signals()
+            # self.FrmPendaftaran.show()  
+            # self.ui_pendaftaran.Lbl_CurrentUser.setText(username)
+            # self.ui_pendaftaran.Lbl_UserRole.setText(result[3])
+            # self.ui_pendaftaran.Lbl_UserRole.setVisible(False)
+            # self.FrmPendaftaran.show()  
+            ui.Lbl_CurrentUser.setText(username)
+            ui.Lbl_UserRole.setText(result[3])
+            ui.Lbl_UserRole.setVisible(False)
+            FrmLogin.hide()
+
+    except mdb.Error as e:
+        pesan(self, QMessageBox.Information,"Error","Some Error")
 
 def pesan(self, ikon, judul, isipesan):
         msgBox = QMessageBox()
@@ -210,15 +246,14 @@ def User(self):
         pesan(self,QMessageBox.Information,"Warning","you dont have authorisation, Please contact Admin")
 
 def Login(self):
-    self.FrmLogin = QtWidgets.QMainWindow()
-    self.ui_login = Ui_FrmLogin()
-    self.ui_login.setupUi(self.FrmLogin)
-    self.ui_login.signals()
-    self.FrmLogin.show()
+    FrmLogin.show()
 
 def Logout(self):
     self.Lbl_CurrentUser.setText("Guest")
     self.Lbl_UserRole.setText("")
+
+Ui_FrmLogin.signals=login_signals
+Ui_FrmLogin.login = login
 
 Ui_FrmPendaftaran.signals=signals
 Ui_FrmPendaftaran.Cari=Cari
@@ -232,11 +267,17 @@ Ui_FrmPendaftaran.Login=Login
 Ui_FrmPendaftaran.Logout=Logout
 
 if __name__ == "__main__":
-    import sys
     app = QtWidgets.QApplication(sys.argv)
     FrmPendaftaran = QtWidgets.QMainWindow()
     ui = Ui_FrmPendaftaran()
     ui.setupUi(FrmPendaftaran)
     ui.signals()
     FrmPendaftaran.show()
+
+    FrmLogin = QtWidgets.QMainWindow()
+    ui_login = Ui_FrmLogin()
+    ui_login.setupUi(FrmLogin)
+    ui_login.signals()
+    # FrmLogin.show()
+
     sys.exit(app.exec_())
