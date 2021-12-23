@@ -11,8 +11,11 @@ from FrmUser import *
 from FrmUser_prog import *
 from FrmLogin import *
 # from FrmLogin_prog import *
+a=1
 
 def signals(self):
+    global a
+
     self.PB_Cari.clicked.connect(self.Cari)
     self.PB_Submit.clicked.connect(self.Submit)
     self.PB_Pasien.clicked.connect(self.Pasien)
@@ -22,6 +25,10 @@ def signals(self):
     self.PB_Logout.clicked.connect(self.Logout)
     self.Cmb_Bidang.currentTextChanged.connect(self.DisplayDokter)
     self.Cmb_NamaDr.currentTextChanged.connect(self.DisplayDetailDokter)
+    if a==1:
+        a=0
+        ui.Lbl_UserRole.setVisible(False)
+
 
 def login_signals(self):
     self.PB_login.clicked.connect(self.login)
@@ -53,6 +60,8 @@ def login(self):
             ui.Lbl_CurrentUser.setText(username)
             ui.Lbl_UserRole.setText(result[3])
             ui.Lbl_UserRole.setVisible(False)
+            self.Txt_username.setText("")
+            self.Txt_password.setText("")
             FrmLogin.hide()
 
     except mdb.Error as e:
