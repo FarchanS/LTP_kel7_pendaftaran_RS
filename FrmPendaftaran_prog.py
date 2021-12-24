@@ -19,6 +19,7 @@ from FrmLogin import *
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 import time
+import datetime 
 
 a=1
 b=0
@@ -254,6 +255,7 @@ def Submit(self):
         cur.execute("INSERT INTO kedatangan(No, KTP, IdDokter, DatangTgl, DatangJam) VALUES(%s, %s, %s, %s, %s)",('',idpasien,iddokter,tanggal,jam))
         con.commit()    
         pesan(self, QMessageBox.Information,"Info","Data Inserted Successfully")
+        con.close()
 
         #ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
         # isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada Tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
@@ -322,11 +324,21 @@ def handleResponse(self, reply):
             # self.label_8.setText('GAGAL')
 
 def scheduling():
+    global iddokter
 
     print("Hi..")
-    # now = datetime.now()
-    # waktu = now.strftime("%d/%m/%Y %H:%M:%S")
 
+    today = datetime.date.today()
+    # yesterday = today - datetime.timedelta(days = 1)
+    tomorrow = today + datetime.timedelta(days = 1) 
+    # print('Yesterday : ',yesterday)
+    # print('Today : ',today)
+    print('Tomorrow : ',tomorrow)
+    # skrg = datetime.now()
+    # skrg=
+    # waktu = now.strftime("%d/%m/%Y %H:%M:%S")
+    # tomorrow = (datetime.now() + datetime.timedelta(days=1)).day
+    print(tomorrow)
     # # jeniskelamin = str(self.comboBox.currentText())
     # # pekerjaanpasien = str(self.comboBox_2.currentText())
     if ui.Opt_Kawin.isChecked():
@@ -337,38 +349,47 @@ def scheduling():
     
     namapasien = ui.Txt_Nama.text()
     print(namapasien)
+    con = mdb.connect('localhost','root','','ltp_final_project1_db')
+        
+    cur = con.cursor()
+    cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE IdDokter = %s and DatangTgl = %s", ([iddokter], [tomorrow]))
 
+    result = cur.fetchall()
+    # print(result)
+    jumlahpasien=result[0][0]
+    print(jumlahpasien)
+    con.close()
     # # kotapasien = self.lineEdit_2.text()
     # # lahirpasien = self.Cal_TanggalLahir.selectedDate().toPyDate()
     # lahirpasien = self.Cal_TanggalLahir.selectedDate().toString("dd-MM-yyyy")
     # # print(lahirpasien)
 
-    # if self.Cmb_Bidang.currentIndex() == 0:
-    #     pilihandokter = "5053782348:AAFv4Dn-DwiW2kv8gEHcplmv_NWpJeC8Gdk" #dokter umum
-    #     #chatid = "1398822979" #chat id rita
-    # elif self.Cmb_Bidang.currentIndex() == 1:
-    #     pilihandokter = "5055872361:AAF7SvlXPItk5S3cS1oYmpFW-zG1xrctS5Q" #spesialis kandungan
-    #     #chatid = "1398822979" 
-    # elif self.Cmb_Bidang.currentIndex() == 2:
-    #     pilihandokter = "5012230148:AAFmIRXr2_04IiqUANCkLeduYPsJP_IKqqg" #spesialis anak
-    # elif self.Cmb_Bidang.currentIndex() == 3:
-    #     pilihandokter = "5049996996:AAGfd5cGbqjgUvt_jMWrkBldTqIbWAKPkoE" # spesialis penyakit dalam
-    # elif self.Cmb_Bidang.currentIndex() == 4:
-    #     pilihandokter = "5033401776:AAG0M26Bwk-XdukgLwP-kCuEx-UtW4Hzs0A" #spesialis bedah
-    # else:
-    #     pilihandokter = "2070076356:AAHjDS_mB9IE-1sBwoxTDzA8y05TMb3XIi8" #form RS bot
+    if ui.Cmb_Bidang.currentIndex() == 0:
+        pilihandokter = "5053782348:AAFv4Dn-DwiW2kv8gEHcplmv_NWpJeC8Gdk" #dokter umum
+        #chatid = "1398822979" #chat id rita
+    elif ui.Cmb_Bidang.currentIndex() == 1:
+        pilihandokter = "5055872361:AAF7SvlXPItk5S3cS1oYmpFW-zG1xrctS5Q" #spesialis kandungan
+        #chatid = "1398822979" 
+    elif ui.Cmb_Bidang.currentIndex() == 2:
+        pilihandokter = "5012230148:AAFmIRXr2_04IiqUANCkLeduYPsJP_IKqqg" #spesialis anak
+    elif ui.Cmb_Bidang.currentIndex() == 3:
+        pilihandokter = "5049996996:AAGfd5cGbqjgUvt_jMWrkBldTqIbWAKPkoE" # spesialis penyakit dalam
+    elif ui.Cmb_Bidang.currentIndex() == 4:
+        pilihandokter = "5033401776:AAG0M26Bwk-XdukgLwP-kCuEx-UtW4Hzs0A" #spesialis bedah
+    else:
+        pilihandokter = "2070076356:AAHjDS_mB9IE-1sBwoxTDzA8y05TMb3XIi8" #form RS bot
 
-    # urlawal = 'https://api.telegram.org/bot' +pilihandokter+ '/sendMessage?chat_id=1398822979&parse_mode=html&text='
-    # # pesan1 = '<b>PASIEN BARU</b>%0AWaktu Submit : '+waktu+'%0A%0ANama Pasien : '+namapasien+'%0AKota : '+kotapasien+'%0ATanggal Lahir : '+lahirpasien+''
-    # # pesan2 = '%0AJenis Kelamin : '+jeniskelamin+'%0APekerjaan : '+pekerjaanpasien+'%0AStatus Nikah : '+statusnikah+'%0ASpesialis yang dipilih : '+self.comboBox_3.currentText()
-    # pesan1='Hi.. '
-    # # url = urlawal+pesan1+pesan2
-    # url = urlawal+pesan1
-    # req = QtNetwork.QNetworkRequest(QUrl(url))
+    urlawal = 'https://api.telegram.org/bot' +pilihandokter+ '/sendMessage?chat_id=1398822979&parse_mode=html&text='
+    # pesan1 = '<b>PASIEN BARU</b>%0AWaktu Submit : '+waktu+'%0A%0ANama Pasien : '+namapasien+'%0AKota : '+kotapasien+'%0ATanggal Lahir : '+lahirpasien+''
+    # pesan2 = '%0AJenis Kelamin : '+jeniskelamin+'%0APekerjaan : '+pekerjaanpasien+'%0AStatus Nikah : '+statusnikah+'%0ASpesialis yang dipilih : '+self.comboBox_3.currentText()
+    pesan1='Besok ada ' + str(jumlahpasien) + ' orang pasien yang akan datang Dok..!!'
+    # url = urlawal+pesan1+pesan2
+    url = urlawal+pesan1
+    req = QtNetwork.QNetworkRequest(QUrl(url))
 
-    # self.nam = QtNetwork.QNetworkAccessManager()
-    # self.nam.finished.connect(self.handleResponse)
-    # self.nam.get(req)
+    ui.nam = QtNetwork.QNetworkAccessManager()
+    ui.nam.finished.connect(ui.handleResponse)
+    ui.nam.get(req)
 
 Ui_FrmLogin.signals=login_signals
 Ui_FrmLogin.login = login
@@ -401,7 +422,7 @@ if __name__ == "__main__":
     # FrmLogin.show()
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(scheduling, 'interval', seconds=10)
+    scheduler.add_job(scheduling, 'interval', seconds=5)
     scheduler.start()
 
     sys.exit(app.exec_())
