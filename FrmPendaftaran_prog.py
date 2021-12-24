@@ -1,3 +1,4 @@
+from os import error
 import urllib.parse
 import urllib.request 
 import MySQLdb as mdb
@@ -230,13 +231,16 @@ def DisplayDetailDokter(self):
         self.Time7_Tutup.setTime(QTime(0,0))
 
 def Submit(self):
-    #ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
-    isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada Tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
-    print(isisms)
-    apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
-    apisms_response = apisms.read()
+    try:
+        #ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
+        isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada Tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
+        print(isisms)
+        apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
+        apisms_response = apisms.read()
 
     # print(apisms)
+    except error:
+        pesan(self,QMessageBox.Information,"Warning","Phone number kosong")
 
 def Pasien(self):
     if (self.Lbl_UserRole.text()=='Admin'):
@@ -294,7 +298,7 @@ def handleResponse(self, reply):
             # self.label_8.setStyleSheet("color:red")
             # self.label_8.setText('GAGAL')
 
-def scheduling(self):
+def scheduling():
 
     print("Hi..")
     # now = datetime.now()
@@ -302,13 +306,15 @@ def scheduling(self):
 
     # # jeniskelamin = str(self.comboBox.currentText())
     # # pekerjaanpasien = str(self.comboBox_2.currentText())
-    # if self.Opt_Kawin.isChecked():
-    #     statusnikah = 'Kawin'
-    # else:
-    #     statusnikah = 'Belum Kawin'
+    if ui.Opt_Kawin.isChecked():
+        statusnikah = 'Kawin'
+    else:
+        statusnikah = 'Belum Kawin'
     
     
-    # namapasien = self.Txt_Nama.text()
+    namapasien = ui.Txt_Nama.text()
+    print(namapasien)
+    
     # # kotapasien = self.lineEdit_2.text()
     # # lahirpasien = self.Cal_TanggalLahir.selectedDate().toPyDate()
     # lahirpasien = self.Cal_TanggalLahir.selectedDate().toString("dd-MM-yyyy")
@@ -355,7 +361,6 @@ Ui_FrmPendaftaran.User=User
 Ui_FrmPendaftaran.Login=Login
 Ui_FrmPendaftaran.Logout=Logout
 Ui_FrmPendaftaran.scheduling=scheduling
-
 Ui_FrmPendaftaran.handleResponse=handleResponse
 
 if __name__ == "__main__":
