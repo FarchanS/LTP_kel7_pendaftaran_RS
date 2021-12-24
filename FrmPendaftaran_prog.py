@@ -16,9 +16,11 @@ from FrmUser import *
 from FrmUser_prog import *
 from FrmLogin import *
 from datetime import datetime
-
+from apscheduler.schedulers.background import BackgroundScheduler
+import time
 
 a=1
+b=0
 
 def signals(self):
     global a
@@ -228,55 +230,11 @@ def DisplayDetailDokter(self):
         self.Time7_Tutup.setTime(QTime(0,0))
 
 def Submit(self):
-    now = datetime.now()
-    waktu = now.strftime("%d/%m/%Y %H:%M:%S")
-
-    # jeniskelamin = str(self.comboBox.currentText())
-    # pekerjaanpasien = str(self.comboBox_2.currentText())
-    if self.Opt_Kawin.isChecked():
-        statusnikah = 'Kawin'
-    else:
-        statusnikah = 'Belum Kawin'
-    
-    
-    namapasien = self.Txt_Nama.text()
-    # kotapasien = self.lineEdit_2.text()
-    # lahirpasien = self.Cal_TanggalLahir.selectedDate().toPyDate()
-    lahirpasien = self.Cal_TanggalLahir.selectedDate().toString("dd-MM-yyyy")
-    # print(lahirpasien)
-
-    if self.Cmb_Bidang.currentIndex() == 0:
-        pilihandokter = "5053782348:AAFv4Dn-DwiW2kv8gEHcplmv_NWpJeC8Gdk" #dokter umum
-        #chatid = "1398822979" #chat id rita
-    elif self.Cmb_Bidang.currentIndex() == 1:
-        pilihandokter = "5055872361:AAF7SvlXPItk5S3cS1oYmpFW-zG1xrctS5Q" #spesialis kandungan
-        #chatid = "1398822979" 
-    elif self.Cmb_Bidang.currentIndex() == 2:
-        pilihandokter = "5012230148:AAFmIRXr2_04IiqUANCkLeduYPsJP_IKqqg" #spesialis anak
-    elif self.Cmb_Bidang.currentIndex() == 3:
-        pilihandokter = "5049996996:AAGfd5cGbqjgUvt_jMWrkBldTqIbWAKPkoE" # spesialis penyakit dalam
-    elif self.Cmb_Bidang.currentIndex() == 4:
-        pilihandokter = "5033401776:AAG0M26Bwk-XdukgLwP-kCuEx-UtW4Hzs0A" #spesialis bedah
-    else:
-        pilihandokter = "2070076356:AAHjDS_mB9IE-1sBwoxTDzA8y05TMb3XIi8" #form RS bot
-
-    urlawal = 'https://api.telegram.org/bot' +pilihandokter+ '/sendMessage?chat_id=1398822979&parse_mode=html&text='
-    # pesan1 = '<b>PASIEN BARU</b>%0AWaktu Submit : '+waktu+'%0A%0ANama Pasien : '+namapasien+'%0AKota : '+kotapasien+'%0ATanggal Lahir : '+lahirpasien+''
-    # pesan2 = '%0AJenis Kelamin : '+jeniskelamin+'%0APekerjaan : '+pekerjaanpasien+'%0AStatus Nikah : '+statusnikah+'%0ASpesialis yang dipilih : '+self.comboBox_3.currentText()
-    pesan1='Hi.. '
-    # url = urlawal+pesan1+pesan2
-    url = urlawal+pesan1
-    req = QtNetwork.QNetworkRequest(QUrl(url))
-
-    self.nam = QtNetwork.QNetworkAccessManager()
-    self.nam.finished.connect(self.handleResponse)
-    self.nam.get(req)
-
     #ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
-    # isisms = 'Bapak/Ibu ' +namapasien+ ', anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada Tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
-    # print(isisms)
-    # apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
-    # apisms_response = apisms.read()
+    isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada Tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
+    print(isisms)
+    apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
+    apisms_response = apisms.read()
 
     # print(apisms)
 
@@ -336,6 +294,53 @@ def handleResponse(self, reply):
             # self.label_8.setStyleSheet("color:red")
             # self.label_8.setText('GAGAL')
 
+def scheduling(self):
+
+    print("Hi..")
+    # now = datetime.now()
+    # waktu = now.strftime("%d/%m/%Y %H:%M:%S")
+
+    # # jeniskelamin = str(self.comboBox.currentText())
+    # # pekerjaanpasien = str(self.comboBox_2.currentText())
+    # if self.Opt_Kawin.isChecked():
+    #     statusnikah = 'Kawin'
+    # else:
+    #     statusnikah = 'Belum Kawin'
+    
+    
+    # namapasien = self.Txt_Nama.text()
+    # # kotapasien = self.lineEdit_2.text()
+    # # lahirpasien = self.Cal_TanggalLahir.selectedDate().toPyDate()
+    # lahirpasien = self.Cal_TanggalLahir.selectedDate().toString("dd-MM-yyyy")
+    # # print(lahirpasien)
+
+    # if self.Cmb_Bidang.currentIndex() == 0:
+    #     pilihandokter = "5053782348:AAFv4Dn-DwiW2kv8gEHcplmv_NWpJeC8Gdk" #dokter umum
+    #     #chatid = "1398822979" #chat id rita
+    # elif self.Cmb_Bidang.currentIndex() == 1:
+    #     pilihandokter = "5055872361:AAF7SvlXPItk5S3cS1oYmpFW-zG1xrctS5Q" #spesialis kandungan
+    #     #chatid = "1398822979" 
+    # elif self.Cmb_Bidang.currentIndex() == 2:
+    #     pilihandokter = "5012230148:AAFmIRXr2_04IiqUANCkLeduYPsJP_IKqqg" #spesialis anak
+    # elif self.Cmb_Bidang.currentIndex() == 3:
+    #     pilihandokter = "5049996996:AAGfd5cGbqjgUvt_jMWrkBldTqIbWAKPkoE" # spesialis penyakit dalam
+    # elif self.Cmb_Bidang.currentIndex() == 4:
+    #     pilihandokter = "5033401776:AAG0M26Bwk-XdukgLwP-kCuEx-UtW4Hzs0A" #spesialis bedah
+    # else:
+    #     pilihandokter = "2070076356:AAHjDS_mB9IE-1sBwoxTDzA8y05TMb3XIi8" #form RS bot
+
+    # urlawal = 'https://api.telegram.org/bot' +pilihandokter+ '/sendMessage?chat_id=1398822979&parse_mode=html&text='
+    # # pesan1 = '<b>PASIEN BARU</b>%0AWaktu Submit : '+waktu+'%0A%0ANama Pasien : '+namapasien+'%0AKota : '+kotapasien+'%0ATanggal Lahir : '+lahirpasien+''
+    # # pesan2 = '%0AJenis Kelamin : '+jeniskelamin+'%0APekerjaan : '+pekerjaanpasien+'%0AStatus Nikah : '+statusnikah+'%0ASpesialis yang dipilih : '+self.comboBox_3.currentText()
+    # pesan1='Hi.. '
+    # # url = urlawal+pesan1+pesan2
+    # url = urlawal+pesan1
+    # req = QtNetwork.QNetworkRequest(QUrl(url))
+
+    # self.nam = QtNetwork.QNetworkAccessManager()
+    # self.nam.finished.connect(self.handleResponse)
+    # self.nam.get(req)
+
 Ui_FrmLogin.signals=login_signals
 Ui_FrmLogin.login = login
 
@@ -349,6 +354,7 @@ Ui_FrmPendaftaran.Dokter=Dokter
 Ui_FrmPendaftaran.User=User
 Ui_FrmPendaftaran.Login=Login
 Ui_FrmPendaftaran.Logout=Logout
+Ui_FrmPendaftaran.scheduling=scheduling
 
 Ui_FrmPendaftaran.handleResponse=handleResponse
 
@@ -365,5 +371,17 @@ if __name__ == "__main__":
     ui_login.setupUi(FrmLogin)
     ui_login.signals()
     # FrmLogin.show()
+
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(scheduling, 'interval', seconds=10)
+    scheduler.start()
+    # print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
+    # try:
+    #     # This is here to simulate application activity (which keeps the main thread alive).
+    #     while True:
+    #         time.sleep(9)
+    # except (KeyboardInterrupt, SystemExit):
+    #     # Not strictly necessary if daemonic mode is enabled but should be done if possible
+    #     scheduler.shutdown()
 
     sys.exit(app.exec_())
