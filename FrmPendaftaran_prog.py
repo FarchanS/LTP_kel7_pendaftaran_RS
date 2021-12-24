@@ -246,7 +246,7 @@ def Submit(self):
 
     tanggal=self.Cal_TanggalDatang.selectedDate().toPyDate()
     jam=self.TimeDatang.time().toString()
-    
+
     try:
         con = mdb.connect('localhost','root','','ltp_final_project1_db')
         
@@ -256,10 +256,10 @@ def Submit(self):
         pesan(self, QMessageBox.Information,"Info","Data Inserted Successfully")
 
         #ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
-        isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada Tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
-        print(isisms)
-        apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
-        apisms_response = apisms.read()
+        # isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada Tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
+        # print(isisms)
+        # apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
+        # apisms_response = apisms.read()
 
     # print(apisms)
     except error:
