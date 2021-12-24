@@ -1,7 +1,12 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import * 
+import urllib.parse
+import urllib.request 
 import MySQLdb as mdb
 import sys
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import pyqtSignal, QUrl, QUrlQuery
+from PyQt5 import QtNetwork
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest,QNetworkCookieJar
 from FrmPendaftaran import *
 from FrmPasien import *
 from FrmPasien_prog import *
@@ -10,7 +15,9 @@ from FrmDokter_prog import *
 from FrmUser import *
 from FrmUser_prog import *
 from FrmLogin import *
-# from FrmLogin_prog import *
+from datetime import datetime
+
+
 a=1
 
 def signals(self):
@@ -28,7 +35,6 @@ def signals(self):
     if a==1:
         a=0
         ui.Lbl_UserRole.setVisible(False)
-
 
 def login_signals(self):
     self.PB_login.clicked.connect(self.login)
@@ -123,7 +129,7 @@ def DisplayDokter(self):
         cur.execute("SELECT * FROM dokter WHERE BidangKedokteran like %s", [Bidang])
 
         result = cur.fetchall()
-        print(result)
+        # print(result)
 
         if result == ():
             self.Cmb_NamaDr.clear()
@@ -148,7 +154,7 @@ def DisplayDetailDokter(self):
         cur.execute("SELECT * FROM dokter WHERE Nama like %s", [NamaDokter])
 
         result = cur.fetchall()
-        print(result)
+        # print(result)
 
         if result == ():
             self.Txt_PhoneDokter.setText("")
@@ -222,7 +228,57 @@ def DisplayDetailDokter(self):
         self.Time7_Tutup.setTime(QTime(0,0))
 
 def Submit(self):
-    pass
+    now = datetime.now()
+    waktu = now.strftime("%d/%m/%Y %H:%M:%S")
+
+    # jeniskelamin = str(self.comboBox.currentText())
+    # pekerjaanpasien = str(self.comboBox_2.currentText())
+    if self.Opt_Kawin.isChecked():
+        statusnikah = 'Kawin'
+    else:
+        statusnikah = 'Belum Kawin'
+    
+    
+    namapasien = self.Txt_Nama.text()
+    # kotapasien = self.lineEdit_2.text()
+    # lahirpasien = self.Cal_TanggalLahir.selectedDate().toPyDate()
+    lahirpasien = self.Cal_TanggalLahir.selectedDate().toString("dd-MM-yyyy")
+    # print(lahirpasien)
+
+    if self.Cmb_Bidang.currentIndex() == 0:
+        pilihandokter = "5053782348:AAFv4Dn-DwiW2kv8gEHcplmv_NWpJeC8Gdk" #dokter umum
+        #chatid = "1398822979" #chat id rita
+    elif self.Cmb_Bidang.currentIndex() == 1:
+        pilihandokter = "5055872361:AAF7SvlXPItk5S3cS1oYmpFW-zG1xrctS5Q" #spesialis kandungan
+        #chatid = "1398822979" 
+    elif self.Cmb_Bidang.currentIndex() == 2:
+        pilihandokter = "5012230148:AAFmIRXr2_04IiqUANCkLeduYPsJP_IKqqg" #spesialis anak
+    elif self.Cmb_Bidang.currentIndex() == 3:
+        pilihandokter = "5049996996:AAGfd5cGbqjgUvt_jMWrkBldTqIbWAKPkoE" # spesialis penyakit dalam
+    elif self.Cmb_Bidang.currentIndex() == 4:
+        pilihandokter = "5033401776:AAG0M26Bwk-XdukgLwP-kCuEx-UtW4Hzs0A" #spesialis bedah
+    else:
+        pilihandokter = "2070076356:AAHjDS_mB9IE-1sBwoxTDzA8y05TMb3XIi8" #form RS bot
+
+    urlawal = 'https://api.telegram.org/bot' +pilihandokter+ '/sendMessage?chat_id=1398822979&parse_mode=html&text='
+    # pesan1 = '<b>PASIEN BARU</b>%0AWaktu Submit : '+waktu+'%0A%0ANama Pasien : '+namapasien+'%0AKota : '+kotapasien+'%0ATanggal Lahir : '+lahirpasien+''
+    # pesan2 = '%0AJenis Kelamin : '+jeniskelamin+'%0APekerjaan : '+pekerjaanpasien+'%0AStatus Nikah : '+statusnikah+'%0ASpesialis yang dipilih : '+self.comboBox_3.currentText()
+    pesan1='Hi.. '
+    # url = urlawal+pesan1+pesan2
+    url = urlawal+pesan1
+    req = QtNetwork.QNetworkRequest(QUrl(url))
+
+    self.nam = QtNetwork.QNetworkAccessManager()
+    self.nam.finished.connect(self.handleResponse)
+    self.nam.get(req)
+
+    #ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
+    # isisms = 'Bapak/Ibu ' +namapasien+ ', anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada Tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
+    # print(isisms)
+    # apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
+    # apisms_response = apisms.read()
+
+    # print(apisms)
 
 def Pasien(self):
     if (self.Lbl_UserRole.text()=='Admin'):
@@ -261,6 +317,25 @@ def Logout(self):
     self.Lbl_CurrentUser.setText("Guest")
     self.Lbl_UserRole.setText("")
 
+def handleResponse(self, reply):
+
+        er = reply.error()
+
+        if er == QtNetwork.QNetworkReply.NoError:
+
+            bytes_string = reply.readAll()
+            print(str(bytes_string, 'utf-8'))
+            pesan(self,QMessageBox.Information,"Info","Terkirim")
+            # self.label_8.setStyleSheet("color:green")
+            # self.label_8.setText("TERKIRIM")
+
+        else:
+            print("Error occured: ", er)
+            print(reply.errorString())
+            pesan(self,QMessageBox.Information,"Warning","GAGAL !!")
+            # self.label_8.setStyleSheet("color:red")
+            # self.label_8.setText('GAGAL')
+
 Ui_FrmLogin.signals=login_signals
 Ui_FrmLogin.login = login
 
@@ -274,6 +349,8 @@ Ui_FrmPendaftaran.Dokter=Dokter
 Ui_FrmPendaftaran.User=User
 Ui_FrmPendaftaran.Login=Login
 Ui_FrmPendaftaran.Logout=Logout
+
+Ui_FrmPendaftaran.handleResponse=handleResponse
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
