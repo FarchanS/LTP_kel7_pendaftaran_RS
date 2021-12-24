@@ -22,6 +22,8 @@ import time
 
 a=1
 b=0
+iddokter="0"
+idpasien=0
 
 def signals(self):
     global a
@@ -85,7 +87,7 @@ def pesan(self, ikon, judul, isipesan):
         msgBox.exec()
 
 def Cari(self):
-
+    global idpasien
     try:
         con = mdb.connect('localhost','root','','ltp_final_project1_db')
 
@@ -97,6 +99,7 @@ def Cari(self):
         result = cur.fetchall()
     
         if result == ():
+            idpasien=0
             self.Txt_Nama.setText("")
             self.Txt_Alamat.setText("")
             today = QtCore.QDate.currentDate()
@@ -104,6 +107,7 @@ def Cari(self):
             self.Txt_Phone.setText("")
             self.Opt_Kawin_2.setChecked(True)
         else:
+            idpasien=result[0][0]
             self.Txt_Nama.setText(result[0][1])
             self.Txt_Alamat.setText(result[0][2])
             tanggalan=QDate(result[0][4]).toPyDate()
@@ -115,6 +119,7 @@ def Cari(self):
                 self.Opt_Kawin_2.setChecked(True)
         
     except mdb.Error as e:
+        idpasien=0
         self.Txt_Nama.setText("")
         self.Txt_Alamat.setText("")
         today = QtCore.QDate.currentDate()
@@ -148,6 +153,8 @@ def DisplayDokter(self):
         self.Txt_PhoneDokter.setText("")
 
 def DisplayDetailDokter(self):
+    global iddokter
+
     NamaDokter = self.Cmb_NamaDr.currentText()
 
     try:
@@ -160,6 +167,7 @@ def DisplayDetailDokter(self):
         # print(result)
 
         if result == ():
+            iddokter="0"
             self.Txt_PhoneDokter.setText("")
             self.Chk_Senin.setChecked(False)
             self.Chk_Selasa.setChecked(False)
@@ -183,6 +191,7 @@ def DisplayDetailDokter(self):
             self.Time7_Buka.setTime(QTime(0,0))
             self.Time7_Tutup.setTime(QTime(0,0))
         else:
+            iddokter=result[0][0]
             self.Txt_PhoneDokter.setText(result[0][2])
             self.Chk_Senin.setChecked(result[0][4])
             self.Time1_Buka.setTime(QTime(int(JamBuka(result[0][5])), int(MinBuka(result[0][5]))))
@@ -208,6 +217,7 @@ def DisplayDetailDokter(self):
 
     
     except mdb.Error as e:
+        iddokter="0"
         self.Chk_Senin.setChecked(False)
         self.Chk_Selasa.setChecked(False)
         self.Chk_Rabu.setChecked(False)
@@ -231,7 +241,20 @@ def DisplayDetailDokter(self):
         self.Time7_Tutup.setTime(QTime(0,0))
 
 def Submit(self):
+    global idpasien
+    global iddokter
+
+    tanggal=self.Cal_TanggalDatang.selectedDate().toPyDate()
+    jam=self.TimeDatang.time().toString()
+    
     try:
+        con = mdb.connect('localhost','root','','ltp_final_project1_db')
+        
+        cur = con.cursor()
+        cur.execute("INSERT INTO kedatangan(No, KTP, IdDokter, DatangTgl, DatangJam) VALUES(%s, %s, %s, %s, %s)",('',idpasien,iddokter,tanggal,jam))
+        con.commit()    
+        pesan(self, QMessageBox.Information,"Info","Data Inserted Successfully")
+
         #ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
         isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada Tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
         print(isisms)
@@ -314,7 +337,7 @@ def scheduling():
     
     namapasien = ui.Txt_Nama.text()
     print(namapasien)
-    
+
     # # kotapasien = self.lineEdit_2.text()
     # # lahirpasien = self.Cal_TanggalLahir.selectedDate().toPyDate()
     # lahirpasien = self.Cal_TanggalLahir.selectedDate().toString("dd-MM-yyyy")
@@ -380,13 +403,5 @@ if __name__ == "__main__":
     scheduler = BackgroundScheduler()
     scheduler.add_job(scheduling, 'interval', seconds=10)
     scheduler.start()
-    # print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
-    # try:
-    #     # This is here to simulate application activity (which keeps the main thread alive).
-    #     while True:
-    #         time.sleep(9)
-    # except (KeyboardInterrupt, SystemExit):
-    #     # Not strictly necessary if daemonic mode is enabled but should be done if possible
-    #     scheduler.shutdown()
 
     sys.exit(app.exec_())
