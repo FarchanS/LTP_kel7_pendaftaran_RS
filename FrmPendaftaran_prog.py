@@ -1,4 +1,3 @@
-from os import error
 import urllib.parse
 import urllib.request 
 import MySQLdb as mdb
@@ -91,7 +90,6 @@ def Cari(self):
     global idpasien
     try:
         con = mdb.connect('localhost','root','','ltp_final_project1_db')
-
         id_pasien = self.Txt_KTP.text()
 
         cur = con.cursor()
@@ -136,9 +134,7 @@ def DisplayDokter(self):
         
         cur = con.cursor()
         cur.execute("SELECT * FROM dokter WHERE BidangKedokteran like %s", [Bidang])
-
         result = cur.fetchall()
-        # print(result)
 
         if result == ():
             self.Cmb_NamaDr.clear()
@@ -257,11 +253,11 @@ def Submit(self):
         pesan(self, QMessageBox.Information,"Info","Data Inserted Successfully")
         con.close()
 
-        #ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
-        # isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada Tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
+        # ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
+        isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada Tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd/MM/yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
         # print(isisms)
-        # apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
-        # apisms_response = apisms.read()
+        apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
+        apisms_response = apisms.read()
 
     # print(apisms)
     except error:
@@ -313,56 +309,26 @@ def handleResponse(self, reply):
             bytes_string = reply.readAll()
             print(str(bytes_string, 'utf-8'))
             pesan(self,QMessageBox.Information,"Info","Terkirim")
-            # self.label_8.setStyleSheet("color:green")
-            # self.label_8.setText("TERKIRIM")
 
         else:
             print("Error occured: ", er)
             print(reply.errorString())
             pesan(self,QMessageBox.Information,"Warning","GAGAL !!")
-            # self.label_8.setStyleSheet("color:red")
-            # self.label_8.setText('GAGAL')
 
 def scheduling():
     global iddokter
 
-    print("Hi..")
-
     today = datetime.date.today()
-    # yesterday = today - datetime.timedelta(days = 1)
     tomorrow = today + datetime.timedelta(days = 1) 
-    # print('Yesterday : ',yesterday)
-    # print('Today : ',today)
-    print('Tomorrow : ',tomorrow)
-    # skrg = datetime.now()
-    # skrg=
-    # waktu = now.strftime("%d/%m/%Y %H:%M:%S")
-    # tomorrow = (datetime.now() + datetime.timedelta(days=1)).day
-    print(tomorrow)
-    # # jeniskelamin = str(self.comboBox.currentText())
-    # # pekerjaanpasien = str(self.comboBox_2.currentText())
-    if ui.Opt_Kawin.isChecked():
-        statusnikah = 'Kawin'
-    else:
-        statusnikah = 'Belum Kawin'
-    
-    
-    namapasien = ui.Txt_Nama.text()
-    print(namapasien)
+ 
     con = mdb.connect('localhost','root','','ltp_final_project1_db')
         
     cur = con.cursor()
     cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE IdDokter = %s and DatangTgl = %s", ([iddokter], [tomorrow]))
 
     result = cur.fetchall()
-    # print(result)
     jumlahpasien=result[0][0]
-    print(jumlahpasien)
     con.close()
-    # # kotapasien = self.lineEdit_2.text()
-    # # lahirpasien = self.Cal_TanggalLahir.selectedDate().toPyDate()
-    # lahirpasien = self.Cal_TanggalLahir.selectedDate().toString("dd-MM-yyyy")
-    # # print(lahirpasien)
 
     if ui.Cmb_Bidang.currentIndex() == 0:
         pilihandokter = "5053782348:AAFv4Dn-DwiW2kv8gEHcplmv_NWpJeC8Gdk" #dokter umum
@@ -380,10 +346,7 @@ def scheduling():
         pilihandokter = "2070076356:AAHjDS_mB9IE-1sBwoxTDzA8y05TMb3XIi8" #form RS bot
 
     urlawal = 'https://api.telegram.org/bot' +pilihandokter+ '/sendMessage?chat_id=1398822979&parse_mode=html&text='
-    # pesan1 = '<b>PASIEN BARU</b>%0AWaktu Submit : '+waktu+'%0A%0ANama Pasien : '+namapasien+'%0AKota : '+kotapasien+'%0ATanggal Lahir : '+lahirpasien+''
-    # pesan2 = '%0AJenis Kelamin : '+jeniskelamin+'%0APekerjaan : '+pekerjaanpasien+'%0AStatus Nikah : '+statusnikah+'%0ASpesialis yang dipilih : '+self.comboBox_3.currentText()
     pesan1='Besok ada ' + str(jumlahpasien) + ' orang pasien yang akan datang Dok..!!'
-    # url = urlawal+pesan1+pesan2
     url = urlawal+pesan1
     req = QtNetwork.QNetworkRequest(QUrl(url))
 
@@ -422,7 +385,7 @@ if __name__ == "__main__":
     # FrmLogin.show()
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(scheduling, 'interval', seconds=5)
+    scheduler.add_job(scheduling, 'interval', seconds=30)
     scheduler.start()
 
     sys.exit(app.exec_())
