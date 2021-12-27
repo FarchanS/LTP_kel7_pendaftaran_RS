@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import * 
 from FrmUser import *
 import MySQLdb as mdb
+import hashlib
 
 a=0
 
@@ -26,7 +27,7 @@ def pesan(self, ikon, judul, isipesan):
 def InsertData(self): 
     id_user = self.Txt_id_user.text()
     nama = self.Txt_nama.text()
-    password = self.Txt_password.text()
+    password = hashlib.md5(self.Txt_password.text().encode('utf-8')).hexdigest()
     role = self.Cmb_role.currentText()
  
     try:
@@ -44,7 +45,7 @@ def InsertData(self):
 def UpdateData(self):
     id_user = self.Txt_id_user.text()
     nama = self.Txt_nama.text()
-    password = self.Txt_password.text()
+    password = hashlib.md5(self.Txt_password.text().encode('utf-8')).hexdigest()
     role = self.Cmb_role.currentText()
     
     try:
@@ -94,7 +95,7 @@ def select_data(self):
             self.Cmb_role.setCurrentText("")
         else:
             self.Txt_nama.setText(result[0][1])
-            self.Txt_password.setText(result[0][2])
+            #self.Txt_password.setText(result[0][2])
             self.Cmb_role.setCurrentText(result[0][3])
         
     except mdb.Error as e:

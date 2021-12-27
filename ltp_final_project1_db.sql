@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 20, 2021 at 04:02 AM
+-- Generation Time: Dec 27, 2021 at 02:31 PM
 -- Server version: 10.4.21-MariaDB
--- PHP Version: 8.0.12
+-- PHP Version: 8.0.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -120,8 +120,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`IdUser`, `Nama`, `Password`, `Role`) VALUES
-(1, 'hanz', 'a', 'User'),
-(2, 'hanz2', 'q', 'Admin');
+(1, 'hanz', '0cc175b9c0f1b6a831c399e269772661', 'User'),
+(2, 'hanz2', '7694f4a66316e53c8cdd9d9954bd611d', 'Admin'),
+(3, 'rita', 'c822c1b63853ed273b89687ac505f9fa', 'Admin');
 
 --
 -- Indexes for dumped tables
@@ -169,7 +170,7 @@ ALTER TABLE `kedatangan`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `IdUser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `IdUser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables

@@ -18,7 +18,8 @@ from FrmLogin import *
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 import time
-import datetime 
+import datetime
+import hashlib 
 
 a=1
 b=0
@@ -47,12 +48,12 @@ def login_signals(self):
 def login(self):
     try:
         username = self.Txt_username.text()
-        password = self.Txt_password.text()
+        password = hashlib.md5(self.Txt_password.text().encode('utf-8')).hexdigest()
 
         con = mdb.connect('localhost','root','','ltp_final_project1_db')
 
         cur = con.cursor()
-        cur.execute("SELECT * from users where Nama like '"+username + "'and Password like '"+password+"'")
+        cur.execute("SELECT * from users where Nama = '"+username + "'and Password = '"+hashlib.md5(password.encode('utf-8')).hexdigest()+"'")
         result = cur.fetchone()
 
         if result == None:
