@@ -6,7 +6,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import pyqtSignal, QUrl, QUrlQuery
 from PyQt5 import QtNetwork
-from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest,QNetworkCookieJar
+# from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest,QNetworkCookieJar
+from PyQt5.QtNetwork import *
 from FrmPendaftaran import *
 from FrmPasien import *
 from FrmPasien_prog import *
@@ -55,7 +56,8 @@ def login(self):
         cur = con.cursor()
         cur.execute("SELECT * from users where Nama = '"+username + "'and Password = '"+hashlib.md5(password.encode('utf-8')).hexdigest()+"'")
         result = cur.fetchone()
-
+        print(hashlib.md5(password.encode('utf-8')).hexdigest())
+        
         if result == None:
             pesan(self, QMessageBox.Information,"Failed to Login","Incorrect Email & Password")
 
@@ -346,14 +348,15 @@ def scheduling():
     else:
         pilihandokter = "2070076356:AAHjDS_mB9IE-1sBwoxTDzA8y05TMb3XIi8" #form RS bot
 
-    urlawal = 'https://api.telegram.org/bot' +pilihandokter+ '/sendMessage?chat_id=1398822979&parse_mode=html&text='
+    urlawal = 'https://api.telegram.org/bot' +pilihandokter+ '/sendMessage?chat_id=-784802410&parse_mode=html&text='
     pesan1='Besok ada ' + str(jumlahpasien) + ' orang pasien yang akan datang Dok..!!'
     url = urlawal+pesan1
     req = QtNetwork.QNetworkRequest(QUrl(url))
-
+    
     ui.nam = QtNetwork.QNetworkAccessManager()
     ui.nam.finished.connect(ui.handleResponse)
     ui.nam.get(req)
+    print(req)
 
 Ui_FrmLogin.signals=login_signals
 Ui_FrmLogin.login = login
@@ -386,7 +389,7 @@ if __name__ == "__main__":
     # FrmLogin.show()
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(scheduling, 'interval', seconds=30)
+    scheduler.add_job(scheduling, 'interval', seconds=10)
     scheduler.start()
 
     sys.exit(app.exec_())
