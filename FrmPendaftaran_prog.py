@@ -261,7 +261,7 @@ def Submit(self):
         apisms_response = apisms.read()
 
     # print(apisms)
-    except error:
+    except urllib.error:
         pesan(self,QMessageBox.Information,"Warning","Phone number kosong")
 
 def Pasien(self):
