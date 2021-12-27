@@ -4,6 +4,7 @@ from FrmPendaftaran_prog import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import * 
 import MySQLdb as mdb
+import hashlib
 
 def signals(self):
     self.PB_login.clicked.connect(self.login)
@@ -29,7 +30,7 @@ def DBConnection(self):
 def login(self):
     try:
         username = self.Txt_username.text()
-        password = self.Txt_password.text()
+        password = hashlib.md5(self.Txt_password.text().encode('utf-8')).hexdigest()
 
         con = mdb.connect('localhost','root','','ltp_final_project1_db')
 
