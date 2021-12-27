@@ -53,7 +53,7 @@ def login(self):
         con = mdb.connect('localhost','root','','ltp_final_project1_db')
 
         cur = con.cursor()
-        cur.execute("SELECT * from users where Nama = '"+username + "'and Password = '"+hashlib.md5(password.encode('utf-8')).hexdigest()+"'")
+        cur.execute("SELECT * from users where Nama = '"+username + "'and Password = '"+password+"'")
         result = cur.fetchone()
 
         if result == None:
@@ -346,14 +346,21 @@ def scheduling():
     else:
         pilihandokter = "2070076356:AAHjDS_mB9IE-1sBwoxTDzA8y05TMb3XIi8" #form RS bot
 
-    urlawal = 'https://api.telegram.org/bot' +pilihandokter+ '/sendMessage?chat_id=1398822979&parse_mode=html&text='
+    urlawal = 'https://api.telegram.org/bot' +pilihandokter+ '/sendMessage?chat_id=-784802410&parse_mode=html&text='
     pesan1='Besok ada ' + str(jumlahpasien) + ' orang pasien yang akan datang Dok..!!'
     url = urlawal+pesan1
-    req = QtNetwork.QNetworkRequest(QUrl(url))
+    urlfilter = url.replace(" ","%20")
 
-    ui.nam = QtNetwork.QNetworkAccessManager()
-    ui.nam.finished.connect(ui.handleResponse)
-    ui.nam.get(req)
+
+    telegramchat = urllib.request.urlopen(str(urlfilter))
+    telegram_response = telegramchat.read()
+    #req = QtNetwork.QNetworkRequest(QUrl(url))
+
+    print(url)
+
+    #ui.nam = QtNetwork.QNetworkAccessManager()
+    #ui.nam.finished.connect(ui.handleResponse)
+    #ui.nam.get(req)
 
 Ui_FrmLogin.signals=login_signals
 Ui_FrmLogin.login = login
