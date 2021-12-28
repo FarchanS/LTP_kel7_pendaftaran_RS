@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1106</width>
+    <width>1134</width>
     <height>671</height>
    </rect>
   </property>
@@ -18,8 +18,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
-      <width>1081</width>
+      <y>10</y>
+      <width>1111</width>
       <height>20</height>
      </rect>
     </property>
@@ -41,7 +41,7 @@
     <property name="geometry">
      <rect>
       <x>300</x>
-      <y>470</y>
+      <y>540</y>
       <width>251</width>
       <height>111</height>
      </rect>
@@ -118,7 +118,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>470</y>
+      <y>540</y>
       <width>251</width>
       <height>121</height>
      </rect>
@@ -170,9 +170,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>60</y>
+      <y>40</y>
       <width>541</width>
-      <height>391</height>
+      <height>461</height>
      </rect>
     </property>
     <property name="font">
@@ -192,8 +192,8 @@
       <rect>
        <x>0</x>
        <y>20</y>
-       <width>531</width>
-       <height>361</height>
+       <width>544</width>
+       <height>431</height>
       </rect>
      </property>
      <layout class="QFormLayout" name="formLayout">
@@ -352,9 +352,9 @@
     <property name="geometry">
      <rect>
       <x>560</x>
-      <y>60</y>
-      <width>531</width>
-      <height>291</height>
+      <y>40</y>
+      <width>561</width>
+      <height>311</height>
      </rect>
     </property>
     <property name="title">
@@ -366,7 +366,7 @@
        <x>0</x>
        <y>20</y>
        <width>521</width>
-       <height>261</height>
+       <height>291</height>
       </rect>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
@@ -374,7 +374,7 @@
        <number>50</number>
       </property>
       <property name="verticalSpacing">
-       <number>6</number>
+       <number>3</number>
       </property>
       <property name="leftMargin">
        <number>20</number>
@@ -451,6 +451,9 @@
       </item>
       <item row="3" column="1">
        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>3</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
@@ -1034,9 +1037,9 @@
     <property name="geometry">
      <rect>
       <x>560</x>
-      <y>360</y>
-      <width>521</width>
-      <height>301</height>
+      <y>350</y>
+      <width>561</width>
+      <height>311</height>
      </rect>
     </property>
     <property name="title">
@@ -1046,14 +1049,17 @@
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>30</y>
-       <width>511</width>
-       <height>221</height>
+       <y>20</y>
+       <width>551</width>
+       <height>256</height>
       </rect>
      </property>
      <layout class="QFormLayout" name="formLayout_3">
       <property name="horizontalSpacing">
        <number>30</number>
+      </property>
+      <property name="verticalSpacing">
+       <number>3</number>
       </property>
       <property name="leftMargin">
        <number>10</number>
@@ -1103,8 +1109,8 @@
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>260</y>
-       <width>511</width>
+       <y>280</y>
+       <width>551</width>
        <height>31</height>
       </rect>
      </property>
