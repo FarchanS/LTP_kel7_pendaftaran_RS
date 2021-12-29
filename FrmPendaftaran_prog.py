@@ -26,6 +26,7 @@ a=1
 b=0
 iddokter="0"
 idpasien=0
+kapasitas=0
 
 def signals(self):
     global a
@@ -154,6 +155,7 @@ def DisplayDokter(self):
 
 def DisplayDetailDokter(self):
     global iddokter
+    global kapasitas
 
     NamaDokter = self.Cmb_NamaDr.currentText()
 
@@ -168,6 +170,7 @@ def DisplayDetailDokter(self):
 
         if result == ():
             iddokter="0"
+            kapasitas=0
             self.Txt_PhoneDokter.setText("")
             self.Chk_Senin.setChecked(False)
             self.Chk_Selasa.setChecked(False)
@@ -214,8 +217,9 @@ def DisplayDetailDokter(self):
             self.Chk_Minggu.setChecked(result[0][22])
             self.Time7_Buka.setTime(QTime(int(JamBuka(result[0][23])), int(MinBuka(result[0][23]))))
             self.Time7_Tutup.setTime(QTime(int(JamTutup(result[0][24])), int(MinTutup(result[0][24]))))
+            kapasitas=int(result[0][25])
+        # print(kapasitas)
 
-    
     except mdb.Error as e:
         iddokter="0"
         self.Chk_Senin.setChecked(False)
@@ -243,29 +247,38 @@ def DisplayDetailDokter(self):
 def Submit(self):
     global idpasien
     global iddokter
+    global kapasitas
 
     tanggal=self.Cal_TanggalDatang.selectedDate().toPyDate()
-    jam=self.TimeDatang.time().toString()
+    jam=self.TimeDatang.time().toString("HH")
     bidang=self.Cmb_Bidang.currentText()
 
-    # try:
-    con = mdb.connect('localhost','root','','ltp_final_project1_db')
-    
-    cur = con.cursor()
-    cur.execute("INSERT INTO kedatangan(No, KTP, IdDokter, BidangKedokteran, DatangTgl, DatangJam) VALUES(%s, %s, %s, %s, %s, %s)",('',idpasien,iddokter,bidang,tanggal,jam))
-    con.commit()    
-    pesan(self, QMessageBox.Information,"Info","Data Inserted Successfully")
-    con.close()
+    try:
+        con = mdb.connect('localhost','root','','ltp_final_project1_db')
+        
+        cur = con.cursor()
+        cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE IdDokter = %s AND HOUR(DatangJam) = %s", (iddokter, jam))
+        result = cur.fetchall()
 
-    # ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
-    isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd/MM/yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
-    # print(isisms)
-    apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
-    apisms_response = apisms.read()
+        if result[0][0] > kapasitas:
+            pesan(self, QMessageBox.Information,"Info","Antrian melebihi kapasitas, mohon untuk memilih hari yang lain")
+        else:
+            cur.execute("INSERT INTO kedatangan(No, KTP, IdDokter, BidangKedokteran, DatangTgl, DatangJam) VALUES(%s, %s, %s, %s, %s, %s)",('',idpasien,iddokter,bidang,tanggal,jam))
+            con.commit()    
+            pesan(self, QMessageBox.Information,"Info","Kedatangan sudah di simpan")
 
-    # print(apisms)
-    # except error:
-    #     pesan(self,QMessageBox.Information,"Warning","Phone number kosong")
+            # ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
+            isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd/MM/yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
+            # print(isisms)
+            apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
+            apisms_response = apisms.read()
+
+            # print(apisms) 
+
+        con.close()
+
+    except mdb.Error as e:
+        pesan(self,QMessageBox.Information,"Error","Failed")
 
 def Pasien(self):
     if (self.Lbl_UserRole.text()=='Admin'):
@@ -400,7 +413,7 @@ if __name__ == "__main__":
     # FrmLogin.show()
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(scheduling, 'interval', seconds=10)
+    scheduler.add_job(scheduling, 'interval', seconds=100)
     scheduler.start()
 
     sys.exit(app.exec_())
