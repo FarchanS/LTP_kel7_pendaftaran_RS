@@ -251,6 +251,7 @@ def Submit(self):
 
     tanggal=self.Cal_TanggalDatang.selectedDate().toPyDate()
     jam=self.TimeDatang.time().toString("HH")
+    jam1=self.TimeDatang.time().toString("HH:mm")
     bidang=self.Cmb_Bidang.currentText()
 
     try:
@@ -263,7 +264,7 @@ def Submit(self):
         if result[0][0] > kapasitas:
             pesan(self, QMessageBox.Information,"Info","Antrian melebihi kapasitas, mohon untuk memilih hari yang lain")
         else:
-            cur.execute("INSERT INTO kedatangan(No, KTP, IdDokter, BidangKedokteran, DatangTgl, DatangJam) VALUES(%s, %s, %s, %s, %s, %s)",('',idpasien,iddokter,bidang,tanggal,jam))
+            cur.execute("INSERT INTO kedatangan(No, KTP, IdDokter, BidangKedokteran, DatangTgl, DatangJam) VALUES(%s, %s, %s, %s, %s, %s)",('',idpasien,iddokter,bidang,tanggal,jam1))
             con.commit()    
             pesan(self, QMessageBox.Information,"Info","Kedatangan sudah di simpan")
 
@@ -411,9 +412,12 @@ if __name__ == "__main__":
     ui_login.setupUi(FrmLogin)
     ui_login.signals()
     # FrmLogin.show()
-
+    
     scheduler = BackgroundScheduler()
-    scheduler.add_job(scheduling, 'interval', seconds=100)
+    
+    scheduler.add_job(scheduling, 'interval', seconds=30)
+    # scheduler.add_job(scheduling, 'interval', minutes=1)
+    # scheduler.add_job(scheduling, 'cron', day_of_week='mon-sun', hour='18', minute="56", second="*/4")
     scheduler.start()
-
+    
     sys.exit(app.exec_())
