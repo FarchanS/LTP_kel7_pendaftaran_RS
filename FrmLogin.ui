@@ -103,6 +103,11 @@
    </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>Txt_username</tabstop>
+  <tabstop>Txt_password</tabstop>
+  <tabstop>PB_login</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

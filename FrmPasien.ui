@@ -309,6 +309,20 @@
    </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>Txt_KTP</tabstop>
+  <tabstop>Txt_Nama</tabstop>
+  <tabstop>Txt_Alamat</tabstop>
+  <tabstop>Txt_TempatLahir</tabstop>
+  <tabstop>Cal_TanggalLahir</tabstop>
+  <tabstop>Cmb_Kelamin</tabstop>
+  <tabstop>Txt_Phone</tabstop>
+  <tabstop>Chk_Kawin</tabstop>
+  <tabstop>Chk_Kawin_2</tabstop>
+  <tabstop>PB_add</tabstop>
+  <tabstop>PB_update</tabstop>
+  <tabstop>PB_del</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

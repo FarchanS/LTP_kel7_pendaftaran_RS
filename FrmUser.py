@@ -9,7 +9,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import * 
 
 
 class Ui_FrmUser(object):
@@ -52,7 +51,6 @@ class Ui_FrmUser(object):
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.passwordLabel)
         self.Txt_password = QtWidgets.QLineEdit(self.formLayoutWidget)
         self.Txt_password.setObjectName("Txt_password")
-        self.Txt_password.setEchoMode(QLineEdit.Password)
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.Txt_password)
         self.roleLabel = QtWidgets.QLabel(self.formLayoutWidget)
         self.roleLabel.setObjectName("roleLabel")

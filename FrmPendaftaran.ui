@@ -1133,6 +1133,48 @@
    </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>Txt_KTP</tabstop>
+  <tabstop>PB_Cari</tabstop>
+  <tabstop>Txt_Nama</tabstop>
+  <tabstop>Txt_Alamat</tabstop>
+  <tabstop>Cal_TanggalLahir</tabstop>
+  <tabstop>Txt_Phone</tabstop>
+  <tabstop>Opt_Kawin</tabstop>
+  <tabstop>Opt_Kawin_2</tabstop>
+  <tabstop>Cmb_Bidang</tabstop>
+  <tabstop>Cmb_NamaDr</tabstop>
+  <tabstop>Txt_PhoneDokter</tabstop>
+  <tabstop>Chk_Senin</tabstop>
+  <tabstop>Time1_Buka</tabstop>
+  <tabstop>Time1_Tutup</tabstop>
+  <tabstop>Chk_Selasa</tabstop>
+  <tabstop>Time2_Buka</tabstop>
+  <tabstop>Time2_Tutup</tabstop>
+  <tabstop>Chk_Rabu</tabstop>
+  <tabstop>Time3_Buka</tabstop>
+  <tabstop>Time3_Tutup</tabstop>
+  <tabstop>Chk_Kamis</tabstop>
+  <tabstop>Time4_Buka</tabstop>
+  <tabstop>Time4_Tutup</tabstop>
+  <tabstop>Chk_Jumat</tabstop>
+  <tabstop>Time5_Buka</tabstop>
+  <tabstop>Time5_Tutup</tabstop>
+  <tabstop>Chk_Sabtu</tabstop>
+  <tabstop>Time6_Buka</tabstop>
+  <tabstop>Time6_Tutup</tabstop>
+  <tabstop>Chk_Minggu</tabstop>
+  <tabstop>Time7_Buka</tabstop>
+  <tabstop>Time7_Tutup</tabstop>
+  <tabstop>Cal_TanggalDatang</tabstop>
+  <tabstop>TimeDatang</tabstop>
+  <tabstop>PB_Submit</tabstop>
+  <tabstop>PB_Pasien</tabstop>
+  <tabstop>PB_Dokter</tabstop>
+  <tabstop>PB_User</tabstop>
+  <tabstop>PB_Login</tabstop>
+  <tabstop>PB_Logout</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

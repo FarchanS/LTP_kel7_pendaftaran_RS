@@ -132,6 +132,17 @@ class Ui_FrmPasien(object):
 
         self.retranslateUi(FrmPasien)
         QtCore.QMetaObject.connectSlotsByName(FrmPasien)
+        FrmPasien.setTabOrder(self.Txt_KTP, self.Txt_Nama)
+        FrmPasien.setTabOrder(self.Txt_Nama, self.Txt_Alamat)
+        FrmPasien.setTabOrder(self.Txt_Alamat, self.Txt_TempatLahir)
+        FrmPasien.setTabOrder(self.Txt_TempatLahir, self.Cal_TanggalLahir)
+        FrmPasien.setTabOrder(self.Cal_TanggalLahir, self.Cmb_Kelamin)
+        FrmPasien.setTabOrder(self.Cmb_Kelamin, self.Txt_Phone)
+        FrmPasien.setTabOrder(self.Txt_Phone, self.Chk_Kawin)
+        FrmPasien.setTabOrder(self.Chk_Kawin, self.Chk_Kawin_2)
+        FrmPasien.setTabOrder(self.Chk_Kawin_2, self.PB_add)
+        FrmPasien.setTabOrder(self.PB_add, self.PB_update)
+        FrmPasien.setTabOrder(self.PB_update, self.PB_del)
 
     def retranslateUi(self, FrmPasien):
         _translate = QtCore.QCoreApplication.translate

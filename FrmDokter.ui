@@ -663,6 +663,37 @@
    </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>Txt_IdDokter</tabstop>
+  <tabstop>Txt_Nama</tabstop>
+  <tabstop>Txt_Phone</tabstop>
+  <tabstop>Cmb_Bidang</tabstop>
+  <tabstop>Chk_Senin</tabstop>
+  <tabstop>Time1_Buka</tabstop>
+  <tabstop>Time1_Tutup</tabstop>
+  <tabstop>Chk_Selasa</tabstop>
+  <tabstop>Time2_Buka</tabstop>
+  <tabstop>Time2_Tutup</tabstop>
+  <tabstop>Chk_Rabu</tabstop>
+  <tabstop>Time3_Buka</tabstop>
+  <tabstop>Time3_Tutup</tabstop>
+  <tabstop>Chk_Kamis</tabstop>
+  <tabstop>Time4_Buka</tabstop>
+  <tabstop>Time4_Tutup</tabstop>
+  <tabstop>Chk_Jumat</tabstop>
+  <tabstop>Time5_Buka</tabstop>
+  <tabstop>Time5_Tutup</tabstop>
+  <tabstop>Chk_Sabtu</tabstop>
+  <tabstop>Time6_Buka</tabstop>
+  <tabstop>Time6_Tutup</tabstop>
+  <tabstop>Chk_Minggu</tabstop>
+  <tabstop>Time7_Buka</tabstop>
+  <tabstop>Time7_Tutup</tabstop>
+  <tabstop>Txt_Kapasitas</tabstop>
+  <tabstop>PB_add</tabstop>
+  <tabstop>PB_update</tabstop>
+  <tabstop>PB_del</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
