@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 27, 2021 at 02:31 PM
+-- Generation Time: Dec 29, 2021 at 01:57 AM
 -- Server version: 10.4.21-MariaDB
--- PHP Version: 8.0.11
+-- PHP Version: 8.0.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -62,7 +62,11 @@ CREATE TABLE `dokter` (
 
 INSERT INTO `dokter` (`IdDokter`, `Nama`, `phone`, `BidangKedokteran`, `JadwalHari1`, `Jam1Mulai`, `Jam1Berakhir`, `JadwalHari2`, `Jam2Mulai`, `Jam2Berakhir`, `JadwalHari3`, `Jam3Mulai`, `Jam3Berakhir`, `JadwalHari4`, `Jam4Mulai`, `Jam4Berakhir`, `JadwalHari5`, `Jam5Mulai`, `Jam5Berakhir`, `JadwalHari6`, `Jam6Mulai`, `Jam6Berakhir`, `JadwalHari7`, `Jam7Mulai`, `Jam7Berakhir`, `Kapasitas`) VALUES
 ('1', 'rita', '083446787765', 'Kandungan', 1, '10:00:00', '12:00:00', 1, '10:30:00', '12:30:00', 1, '08:00:00', '11:00:00', 1, '09:00:00', '10:00:00', 1, '08:30:00', '11:30:00', 0, '00:00:00', '00:00:00', 0, '00:00:00', '00:00:00', 4),
-('2', 'Irfan', '0833983983', 'Penyakit Dalam', 1, '16:00:00', '18:00:00', 0, '00:00:00', '00:00:00', 1, '16:00:00', '18:00:00', 0, '00:00:00', '00:00:00', 1, '16:00:00', '18:00:00', 0, '00:00:00', '00:00:00', 0, '00:00:00', '00:00:00', 4);
+('2', 'Irfan', '0833983983', 'Penyakit Dalam', 1, '16:00:00', '18:00:00', 0, '00:00:00', '00:00:00', 1, '16:00:00', '18:00:00', 0, '00:00:00', '00:00:00', 1, '16:00:00', '18:00:00', 0, '00:00:00', '00:00:00', 0, '00:00:00', '00:00:00', 4),
+('3', 'Ida', '082905328328', 'Dokter Umum', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 0, '08:00:00', '17:00:00', 5),
+('4', 'Anas', '08394759284', 'Dokter Umum', 0, '00:00:00', '00:00:00', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 5),
+('5', 'Wawan', '08523572938', 'Anak', 1, '08:00:00', '15:00:00', 1, '08:00:00', '15:00:00', 1, '08:00:00', '15:00:00', 1, '08:00:00', '15:00:00', 1, '08:00:00', '15:00:00', 0, '00:00:00', '00:00:00', 0, '00:00:00', '00:00:00', 6),
+('6', 'Ari', '08428493849', 'Bedah', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 1, '08:00:00', '17:00:00', 0, '00:00:00', '00:00:00', 0, '00:00:00', '00:00:00', 1);
 
 -- --------------------------------------------------------
 
@@ -74,9 +78,36 @@ CREATE TABLE `kedatangan` (
   `No` int(11) NOT NULL,
   `KTP` int(15) NOT NULL,
   `IdDokter` varchar(20) NOT NULL,
+  `BidangKedokteran` varchar(50) NOT NULL,
   `DatangTgl` date NOT NULL,
   `DatangJam` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `kedatangan`
+--
+
+INSERT INTO `kedatangan` (`No`, `KTP`, `IdDokter`, `BidangKedokteran`, `DatangTgl`, `DatangJam`) VALUES
+(1, 2, '1', 'Kandungan', '2021-12-29', '10:30:00'),
+(2, 2, '2', 'Penyakit Dalam', '2021-12-31', '17:00:00'),
+(3, 1, '2', 'Penyakit Dalam', '2021-12-25', '19:00:00'),
+(4, 2, '2', 'Penyakit Dalam', '2021-12-25', '19:30:00'),
+(5, 2, '2', 'Penyakit Dalam', '2021-12-25', '19:45:00'),
+(6, 1, '1', 'Kandungan', '2021-12-25', '17:00:00'),
+(7, 1, '1', 'Kandungan', '2021-12-25', '17:00:00'),
+(8, 1, '1', 'Kandungan', '2021-12-25', '17:00:00'),
+(9, 1, '2', 'Penyakit Dalam', '2021-12-25', '17:00:00'),
+(10, 2, '1', 'Kandungan', '2021-12-25', '11:20:00'),
+(11, 1, '3', 'Dokter Umum', '2021-12-30', '10:00:00'),
+(12, 1, '1', 'Kandungan', '2021-12-30', '10:30:00'),
+(13, 1, '5', 'Anak', '2021-12-30', '10:30:00'),
+(14, 1, '2', 'Penyakit Dalam', '2021-12-30', '10:30:00'),
+(15, 1, '6', 'Bedah', '2021-12-30', '10:30:00'),
+(16, 1, '1', 'Kandungan', '2021-12-30', '10:30:00'),
+(17, 2, '5', 'Anak', '2021-12-30', '10:30:00'),
+(18, 2, '1', 'Kandungan', '2021-12-30', '10:30:00'),
+(19, 2, '1', 'Kandungan', '2021-12-30', '10:30:00'),
+(20, 2, '1', 'Kandungan', '2021-12-30', '10:30:00');
 
 -- --------------------------------------------------------
 
@@ -100,7 +131,9 @@ CREATE TABLE `pasien` (
 --
 
 INSERT INTO `pasien` (`KTP`, `Nama`, `Alamat`, `TempatLahir`, `TanggalLahir`, `Kelamin`, `Phone`, `Status`) VALUES
-(1, 'hanz', 'depok	', 'sidoarjo', '2000-06-17', 'pria', '0818828829', 'Kawin');
+(1, 'hanz', 'depok	', 'sidoarjo', '2000-06-17', 'pria', '0818828829', 'Kawin'),
+(2, 'Rita', 'Indonesia', 'Indonesia', '1999-04-28', 'wanita', '081329723412', 'Kawin'),
+(3, 'Royan Habibie', 'Tangerang', 'Tangerang', '1990-05-17', 'pria', '089624471952', 'Kawin');
 
 -- --------------------------------------------------------
 
@@ -120,9 +153,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`IdUser`, `Nama`, `Password`, `Role`) VALUES
-(1, 'hanz', '0cc175b9c0f1b6a831c399e269772661', 'User'),
+(1, 'hanz', '0cc175b9c0f1b6a831c399e269772661', 'Admin'),
 (2, 'hanz2', '7694f4a66316e53c8cdd9d9954bd611d', 'Admin'),
-(3, 'rita', 'c822c1b63853ed273b89687ac505f9fa', 'Admin');
+(3, 'rita', '202cb962ac59075b964b07152d234b70', 'Admin');
 
 --
 -- Indexes for dumped tables
@@ -164,7 +197,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `kedatangan`
 --
 ALTER TABLE `kedatangan`
-  MODIFY `No` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `No` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `users`
