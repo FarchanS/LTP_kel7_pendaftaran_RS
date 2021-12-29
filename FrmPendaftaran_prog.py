@@ -246,25 +246,26 @@ def Submit(self):
 
     tanggal=self.Cal_TanggalDatang.selectedDate().toPyDate()
     jam=self.TimeDatang.time().toString()
+    bidang=self.Cmb_Bidang.currentText()
 
-    try:
-        con = mdb.connect('localhost','root','','ltp_final_project1_db')
-        
-        cur = con.cursor()
-        cur.execute("INSERT INTO kedatangan(No, KTP, IdDokter, DatangTgl, DatangJam) VALUES(%s, %s, %s, %s, %s)",('',idpasien,iddokter,tanggal,jam))
-        con.commit()    
-        pesan(self, QMessageBox.Information,"Info","Data Inserted Successfully")
-        con.close()
+    # try:
+    con = mdb.connect('localhost','root','','ltp_final_project1_db')
+    
+    cur = con.cursor()
+    cur.execute("INSERT INTO kedatangan(No, KTP, IdDokter, BidangKedokteran, DatangTgl, DatangJam) VALUES(%s, %s, %s, %s, %s, %s)",('',idpasien,iddokter,bidang,tanggal,jam))
+    con.commit()    
+    pesan(self, QMessageBox.Information,"Info","Data Inserted Successfully")
+    con.close()
 
-        # ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
-        isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada Tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd/MM/yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
-        # print(isisms)
-        apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
-        apisms_response = apisms.read()
+    # ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
+    isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd/MM/yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
+    # print(isisms)
+    apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
+    apisms_response = apisms.read()
 
     # print(apisms)
-    except urllib.error:
-        pesan(self,QMessageBox.Information,"Warning","Phone number kosong")
+    # except error:
+    #     pesan(self,QMessageBox.Information,"Warning","Phone number kosong")
 
 def Pasien(self):
     if (self.Lbl_UserRole.text()=='Admin'):
@@ -321,49 +322,52 @@ def handleResponse(self, reply):
 def scheduling():
     global iddokter
 
+    bidang=["Dokter Umum", "Kandungan", "Anak", "Penyakit Dalam", "Bedah"]
+
     today = datetime.date.today()
     tomorrow = today + datetime.timedelta(days = 1) 
  
     con = mdb.connect('localhost','root','','ltp_final_project1_db')
-        
-    cur = con.cursor()
-    cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE IdDokter = %s and DatangTgl = %s", ([iddokter], [tomorrow]))
 
-    result = cur.fetchall()
-    jumlahpasien=result[0][0]
+    for i in range(0, 4):
+        cur = con.cursor()
+        cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE BidangKedokteran = %s and DatangTgl = %s", ([bidang[i]], [tomorrow]))
+
+        result = cur.fetchall()
+        jumlahpasien=result[0][0]
+
+        if i == 0:
+            pilihandokter = "5053782348:AAFv4Dn-DwiW2kv8gEHcplmv_NWpJeC8Gdk" #dokter umum
+            #chatid = "1398822979" #chat id rita
+        elif i == 1:
+            pilihandokter = "5055872361:AAF7SvlXPItk5S3cS1oYmpFW-zG1xrctS5Q" #spesialis kandungan
+            #chatid = "1398822979" 
+        elif i == 2:
+            pilihandokter = "5012230148:AAFmIRXr2_04IiqUANCkLeduYPsJP_IKqqg" #spesialis anak
+        elif i == 3:
+            pilihandokter = "5049996996:AAGfd5cGbqjgUvt_jMWrkBldTqIbWAKPkoE" # spesialis penyakit dalam
+        elif i == 4:
+            pilihandokter = "5033401776:AAG0M26Bwk-XdukgLwP-kCuEx-UtW4Hzs0A" #spesialis bedah
+        else:
+            pilihandokter = "2070076356:AAHjDS_mB9IE-1sBwoxTDzA8y05TMb3XIi8" #form RS bot
+
+        urlawal = 'https://api.telegram.org/bot' +pilihandokter+ '/sendMessage?chat_id=-784802410&parse_mode=html&text='
+        if jumlahpasien == 0:
+            pesan1='Besok tidak ada pasien'
+        else:
+            pesan1='Besok ada ' + str(jumlahpasien) + ' orang pasien yang akan datang dok..'
+
+        url = urlawal+pesan1
+
+        urlfilter = url.replace(" ","%20")
+
+
+        telegramchat = urllib.request.urlopen(str(urlfilter))
+        telegram_response = telegramchat.read()
+
+        print(url)
+
     con.close()
-
-    if ui.Cmb_Bidang.currentIndex() == 0:
-        pilihandokter = "5053782348:AAFv4Dn-DwiW2kv8gEHcplmv_NWpJeC8Gdk" #dokter umum
-        #chatid = "1398822979" #chat id rita
-    elif ui.Cmb_Bidang.currentIndex() == 1:
-        pilihandokter = "5055872361:AAF7SvlXPItk5S3cS1oYmpFW-zG1xrctS5Q" #spesialis kandungan
-        #chatid = "1398822979" 
-    elif ui.Cmb_Bidang.currentIndex() == 2:
-        pilihandokter = "5012230148:AAFmIRXr2_04IiqUANCkLeduYPsJP_IKqqg" #spesialis anak
-    elif ui.Cmb_Bidang.currentIndex() == 3:
-        pilihandokter = "5049996996:AAGfd5cGbqjgUvt_jMWrkBldTqIbWAKPkoE" # spesialis penyakit dalam
-    elif ui.Cmb_Bidang.currentIndex() == 4:
-        pilihandokter = "5033401776:AAG0M26Bwk-XdukgLwP-kCuEx-UtW4Hzs0A" #spesialis bedah
-    else:
-        pilihandokter = "2070076356:AAHjDS_mB9IE-1sBwoxTDzA8y05TMb3XIi8" #form RS bot
-
-    urlawal = 'https://api.telegram.org/bot' +pilihandokter+ '/sendMessage?chat_id=-784802410&parse_mode=html&text='
-    pesan1='Besok ada ' + str(jumlahpasien) + ' orang pasien yang akan datang Dok..!!'
-    url = urlawal+pesan1
-
-    urlfilter = url.replace(" ","%20")
-
-
-    telegramchat = urllib.request.urlopen(str(urlfilter))
-    telegram_response = telegramchat.read()
-    #req = QtNetwork.QNetworkRequest(QUrl(url))
-
-    print(url)
-
-    #ui.nam = QtNetwork.QNetworkAccessManager()
-    #ui.nam.finished.connect(ui.handleResponse)
-    #ui.nam.get(req)
 
 Ui_FrmLogin.signals=login_signals
 Ui_FrmLogin.login = login
