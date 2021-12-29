@@ -20,7 +20,8 @@ from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 import time
 import datetime
-import hashlib 
+import hashlib
+from datetime import datetime
 
 a=1
 b=0
@@ -250,33 +251,96 @@ def Submit(self):
     global kapasitas
 
     tanggal=self.Cal_TanggalDatang.selectedDate().toPyDate()
+    # tanggalan=self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy")
     jam=self.TimeDatang.time().toString("HH")
     jam1=self.TimeDatang.time().toString("HH:mm")
     bidang=self.Cmb_Bidang.currentText()
+    
+    tahun=self.Cal_TanggalDatang.selectedDate().toString("yyyy")
+    bulan=self.Cal_TanggalDatang.selectedDate().toString("MM")
+    tgl=self.Cal_TanggalDatang.selectedDate().toString("dd")
+    
+    date_string = tahun+", "+bulan+", "+tgl
+
+    date = datetime.strptime(date_string, "%Y, %m, %d")
+    hari=date.weekday()
+
+    b=0
+    
+    if hari == 0:
+        jam_min = self.Time1_Buka.time().toString("HH")
+        jam_max = self.Time1_Tutup.time().toString("HH")
+
+        if jam<jam_min or jam>jam_max:
+            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
+            b=1
+    elif hari == 1:
+        jam_min = self.Time2_Buka.time().toString("HH")
+        jam_max = self.Time2_Tutup.time().toString("HH")
+
+        if jam<jam_min or jam>jam_max:
+            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
+            b=1
+    elif hari == 2:
+        jam_min = self.Time3_Buka.time().toString("HH")
+        jam_max = self.Time3_Tutup.time().toString("HH")
+
+        if jam<jam_min or jam>jam_max:
+            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
+            b=1
+    elif hari == 3:
+        jam_min = self.Time4_Buka.time().toString("HH")
+        jam_max = self.Time4_Tutup.time().toString("HH")
+
+        if jam<jam_min or jam>jam_max:
+            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
+            b=1
+    elif hari == 4:
+        jam_min = self.Time5_Buka.time().toString("HH")
+        jam_max = self.Time5_Tutup.time().toString("HH")
+
+        if jam<jam_min or jam>jam_max:
+            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
+            b=1
+    elif hari == 5:
+        jam_min = self.Time6_Buka.time().toString("HH")
+        jam_max = self.Time6_Tutup.time().toString("HH")
+
+        if jam<jam_min or jam>jam_max:
+            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
+            b=1
+    elif hari == 6:
+        jam_min = self.Time7_Buka.time().toString("HH")
+        jam_max = self.Time7_Tutup.time().toString("HH")
+
+        if jam<jam_min or jam>jam_max:
+            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
+            b=1
 
     try:
-        con = mdb.connect('localhost','root','','ltp_final_project1_db')
-        
-        cur = con.cursor()
-        cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE IdDokter = %s AND HOUR(DatangJam) = %s", (iddokter, jam))
-        result = cur.fetchall()
+        if b==0:
+            con = mdb.connect('localhost','root','','ltp_final_project1_db')
+            
+            cur = con.cursor()
+            cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE IdDokter = %s AND HOUR(DatangJam) = %s", (iddokter, jam))
+            result = cur.fetchall()
 
-        if result[0][0] > kapasitas:
-            pesan(self, QMessageBox.Information,"Info","Antrian melebihi kapasitas, mohon untuk memilih hari yang lain")
-        else:
-            cur.execute("INSERT INTO kedatangan(No, KTP, IdDokter, BidangKedokteran, DatangTgl, DatangJam) VALUES(%s, %s, %s, %s, %s, %s)",('',idpasien,iddokter,bidang,tanggal,jam1))
-            con.commit()    
-            pesan(self, QMessageBox.Information,"Info","Kedatangan sudah di simpan")
+            if result[0][0] > kapasitas:
+                pesan(self, QMessageBox.Information,"Info","Antrian melebihi kapasitas, mohon untuk memilih hari yang lain")
+            else:
+                cur.execute("INSERT INTO kedatangan(No, KTP, IdDokter, BidangKedokteran, DatangTgl, DatangJam) VALUES(%s, %s, %s, %s, %s, %s)",('',idpasien,iddokter,bidang,tanggal,jam1))
+                con.commit()    
+                pesan(self, QMessageBox.Information,"Info","Kedatangan sudah di simpan")
 
-            # ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
-            isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd/MM/yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
-            # print(isisms)
-            apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
-            apisms_response = apisms.read()
+                # ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
+                isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd/MM/yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
+                # print(isisms)
+                apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
+                apisms_response = apisms.read()
 
-            # print(apisms) 
+                # print(apisms) 
 
-        con.close()
+            con.close()
 
     except mdb.Error as e:
         pesan(self,QMessageBox.Information,"Error","Failed")
