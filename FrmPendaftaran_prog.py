@@ -18,10 +18,8 @@ from FrmUser_prog import *
 from FrmLogin import *
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
-import time
-import datetime
 import hashlib
-from datetime import datetime
+import datetime
 
 a=1
 b=0
@@ -403,11 +401,13 @@ def scheduling():
     bidang=["Dokter Umum", "Kandungan", "Anak", "Penyakit Dalam", "Bedah"]
 
     today = datetime.date.today()
+    # today = datetime.today()
+    print(today)
     tomorrow = today + datetime.timedelta(days = 1) 
  
     con = mdb.connect('localhost','root','','ltp_final_project1_db')
 
-    for i in range(0, 4):
+    for i in range(0, 5):
         cur = con.cursor()
         cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE BidangKedokteran = %s and DatangTgl = %s", ([bidang[i]], [tomorrow]))
 
