@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="2.11">
+    <attributes>
+        <attribute name="name" value=""/>
+        <attribute name="authors" value="Rita Nurmailina"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2022-01-04 05:28:01 PM"/>
+        <attribute name="created" value="Uml0YSBOdXJtYWlsaW5hO0RFU0tUT1AtNVVRMTE3RDsyMDIyLTAxLTA0OzA0OjQxOjEwIFBNOzM3NjA="/>
+        <attribute name="edited" value="Uml0YSBOdXJtYWlsaW5hO0RFU0tUT1AtNVVRMTE3RDsyMDIyLTAxLTA0OzA1OjI4OjAxIFBNOzE7Mzg3NA=="/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <declare name="username, password" type="Integer" array="False" size=""/>
+            <input variable="login"/>
+            <if expression="role == Admin">
+                <then>
+                    <input variable="pasien"/>
+                    <input variable="dokter"/>
+                    <input variable="user"/>
+                    <input variable="jadwalkedatangan"/>
+                </then>
+                <else>
+                    <if expression="role == User">
+                        <then>
+                            <input variable="jadwalkedatangan"/>
+                        </then>
+                        <else/>
+                    </if>
+                </else>
+            </if>
+            <input variable="ktppasien"/>
+            <input variable="doktertujuan"/>
+            <input variable="rencanakedatangan"/>
+            <output expression="&quot;Telegram Chat ke Dokter&quot;" newline="True"/>
+            <output expression="&quot;SMS notifikasi ke pasien&quot;" newline="True"/>
+        </body>
+    </function>
+</flowgorithm>
