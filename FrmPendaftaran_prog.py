@@ -344,14 +344,14 @@ def Submit(self):
         pesan(self,QMessageBox.Information,"Error","Failed")
 
 def Pasien(self):
-    if (self.Lbl_UserRole.text()=='Admin'):
-        self.FrmPasien = QtWidgets.QMainWindow()
-        self.ui_pasien = Ui_FrmPasien()
-        self.ui_pasien.setupUi(self.FrmPasien)
-        self.ui_pasien.signals()
-        self.FrmPasien.show()
-    else:
-        pesan(self,QMessageBox.Information,"Warning","you dont have authorisation, Please contact Admin")
+    # if (self.Lbl_UserRole.text()=='Admin'):
+    self.FrmPasien = QtWidgets.QMainWindow()
+    self.ui_pasien = Ui_FrmPasien()
+    self.ui_pasien.setupUi(self.FrmPasien)
+    self.ui_pasien.signals()
+    self.FrmPasien.show()
+    # else:
+    #     pesan(self,QMessageBox.Information,"Warning","you dont have authorisation, Please contact Admin")
 
 def Dokter(self):
     if (self.Lbl_UserRole.text()=='Admin'):
