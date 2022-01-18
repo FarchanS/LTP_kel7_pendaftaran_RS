@@ -507,7 +507,7 @@ class Ui_FrmPendaftaran(object):
         self.groupBox.setTitle(_translate("FrmPendaftaran", "CURRENT USER"))
         self.PB_Login.setText(_translate("FrmPendaftaran", "LOGIN"))
         self.PB_Logout.setText(_translate("FrmPendaftaran", "LOGOUT"))
-        self.Lbl_CurrentUser.setText(_translate("FrmPendaftaran", "USER"))
+        self.Lbl_CurrentUser.setText(_translate("FrmPendaftaran", "Guest"))
         self.Lbl_UserRole.setText(_translate("FrmPendaftaran", "ROLE"))
         self.groupBox_2.setTitle(_translate("FrmPendaftaran", "ADMINISTRATION"))
         self.PB_Pasien.setText(_translate("FrmPendaftaran", "PASIEN"))

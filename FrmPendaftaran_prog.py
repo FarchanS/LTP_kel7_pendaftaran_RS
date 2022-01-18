@@ -17,9 +17,11 @@ from FrmUser import *
 from FrmUser_prog import *
 from FrmLogin import *
 from datetime import datetime
+
 from apscheduler.schedulers.background import BackgroundScheduler
 import hashlib
-import datetime
+# import datetime
+# from datetime import timedelta
 
 a=1
 b=0
@@ -45,6 +47,7 @@ def signals(self):
 
 def login_signals(self):
     self.PB_login.clicked.connect(self.login)
+    self.Chk_show_pass.stateChanged.connect(self.show_hide_pass)
 
 def login(self):
     try:
@@ -56,7 +59,7 @@ def login(self):
         cur = con.cursor()
         cur.execute("SELECT * from users where Nama = '"+username + "'and Password = '"+password+"'")
         result = cur.fetchone()
-        print(hashlib.md5(password.encode('utf-8')).hexdigest())
+        # print(hashlib.md5(password.encode('utf-8')).hexdigest())
         
         if result == None:
             pesan(self, QMessageBox.Information,"Failed to Login","Incorrect Email & Password")
@@ -248,110 +251,106 @@ def Submit(self):
     global iddokter
     global kapasitas
 
-    tanggal=self.Cal_TanggalDatang.selectedDate().toPyDate()
-    # tanggalan=self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy")
-    jam=self.TimeDatang.time().toString("HH")
-    jam1=self.TimeDatang.time().toString("HH:mm")
-    bidang=self.Cmb_Bidang.currentText()
-    
-    tahun=self.Cal_TanggalDatang.selectedDate().toString("yyyy")
-    bulan=self.Cal_TanggalDatang.selectedDate().toString("MM")
-    tgl=self.Cal_TanggalDatang.selectedDate().toString("dd")
-    
-    date_string = tahun+", "+bulan+", "+tgl
+    if (self.Lbl_CurrentUser.text()!="Guest"):
+        tanggal=self.Cal_TanggalDatang.selectedDate().toPyDate()
+        # tanggalan=self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy")
+        jam=self.TimeDatang.time().toString("HH")
+        jam1=self.TimeDatang.time().toString("HH:mm")
+        bidang=self.Cmb_Bidang.currentText()
+ 
+        # print(jam1)
+        # print(jam)
+        
+        tahun=self.Cal_TanggalDatang.selectedDate().toString("yyyy")
+        bulan=self.Cal_TanggalDatang.selectedDate().toString("MM")
+        tgl=self.Cal_TanggalDatang.selectedDate().toString("dd")
+        
+        date_string = tahun+", "+bulan+", "+tgl
 
-    date = datetime.strptime(date_string, "%Y, %m, %d")
-    hari=date.weekday()
+        date = datetime.strptime(date_string, "%Y, %m, %d")
+        hari=date.weekday()
+        # print("hari: " + str(hari))
+        b=0
+        
+        if hari == 0:
+            jam_min = self.Time1_Buka.time().toString("HH:mm")
+            jam_max = self.Time1_Tutup.time().toString("HH:mm")
+        elif hari == 1:
+            # jam_min = self.Time2_Buka.time().toString("HH")
+            # jam_max = self.Time2_Tutup.time().toString("HH")
+            jam_min = self.Time2_Buka.time().toString("HH:mm")
+            jam_max = self.Time2_Tutup.time().toString("HH:mm")
+        elif hari == 2:
+            jam_min = self.Time3_Buka.time().toString("HH:mm")
+            jam_max = self.Time3_Tutup.time().toString("HH:mm")
+        elif hari == 3:
+            jam_min = self.Time4_Buka.time().toString("HH:mm")
+            jam_max = self.Time4_Tutup.time().toString("HH:mm")
+        elif hari == 4:
+            jam_min = self.Time5_Buka.time().toString("HH:mm")
+            jam_max = self.Time5_Tutup.time().toString("HH:mm")
+        elif hari == 5:
+            jam_min = self.Time6_Buka.time().toString("HH:mm")
+            jam_max = self.Time6_Tutup.time().toString("HH:mm")
+        elif hari == 6:
+            jam_min = self.Time7_Buka.time().toString("HH:mm")
+            jam_max = self.Time7_Tutup.time().toString("HH:mm")
+        
+        # print("jam max: " + str(jam_max))
+        # print("jam min: " + str(jam_min))
+        # print("jam : " + str(jam))
+        
+        if ((jam1<jam_min) or (jam1>=jam_max)):
+                b=1
+        
+        # print("b: " + str(b))
 
-    b=0
-    
-    if hari == 0:
-        jam_min = self.Time1_Buka.time().toString("HH")
-        jam_max = self.Time1_Tutup.time().toString("HH")
+        try:
+            if (b==0):
+                # print("b=0 masuk")
+                # print("kapasitas: " + str(kapasitas))
 
-        if jam<jam_min or jam>jam_max:
-            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
-            b=1
-    elif hari == 1:
-        jam_min = self.Time2_Buka.time().toString("HH")
-        jam_max = self.Time2_Tutup.time().toString("HH")
+                con = mdb.connect('localhost','root','','ltp_final_project1_db')
+                
+                cur = con.cursor()
+                # cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE IdDokter = %s AND HOUR(DatangJam) = %s AND DatangTgl = %s", (iddokter, jam, date))
+                cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE IdDokter = %s AND DatangTgl = %s AND HOUR(DatangJam) = %s",(iddokter, date, jam))
+                result = cur.fetchall()
+                # print(result)
 
-        if jam<jam_min or jam>jam_max:
-            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
-            b=1
-    elif hari == 2:
-        jam_min = self.Time3_Buka.time().toString("HH")
-        jam_max = self.Time3_Tutup.time().toString("HH")
+                if result[0][0] >= kapasitas:
+                    pesan(self, QMessageBox.Information,"Info","Antrian melebihi kapasitas, mohon untuk memilih hari yang lain")
+                else:
+                    cur.execute("INSERT INTO kedatangan(No, KTP, IdDokter, BidangKedokteran, DatangTgl, DatangJam) VALUES(%s, %s, %s, %s, %s, %s)",('',idpasien,iddokter,bidang,tanggal,jam1))
+                    con.commit()    
+                    pesan(self, QMessageBox.Information,"Info","Kedatangan sudah di simpan")
 
-        if jam<jam_min or jam>jam_max:
-            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
-            b=1
-    elif hari == 3:
-        jam_min = self.Time4_Buka.time().toString("HH")
-        jam_max = self.Time4_Tutup.time().toString("HH")
+                    # isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd/MM/yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
+                    # # print(isisms)
+                    # apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
+                    # apisms_response = apisms.read()
 
-        if jam<jam_min or jam>jam_max:
-            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
-            b=1
-    elif hari == 4:
-        jam_min = self.Time5_Buka.time().toString("HH")
-        jam_max = self.Time5_Tutup.time().toString("HH")
+                    # print(apisms) 
 
-        if jam<jam_min or jam>jam_max:
-            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
-            b=1
-    elif hari == 5:
-        jam_min = self.Time6_Buka.time().toString("HH")
-        jam_max = self.Time6_Tutup.time().toString("HH")
-
-        if jam<jam_min or jam>jam_max:
-            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
-            b=1
-    elif hari == 6:
-        jam_min = self.Time7_Buka.time().toString("HH")
-        jam_max = self.Time7_Tutup.time().toString("HH")
-
-        if jam<jam_min or jam>jam_max:
-            pesan(self, QMessageBox.Information,"Info","Jalan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
-            b=1
-
-    try:
-        if b==0:
-            con = mdb.connect('localhost','root','','ltp_final_project1_db')
-            
-            cur = con.cursor()
-            cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE IdDokter = %s AND HOUR(DatangJam) = %s", (iddokter, jam))
-            result = cur.fetchall()
-
-            if result[0][0] > kapasitas:
-                pesan(self, QMessageBox.Information,"Info","Antrian melebihi kapasitas, mohon untuk memilih hari yang lain")
+                con.close()
             else:
-                cur.execute("INSERT INTO kedatangan(No, KTP, IdDokter, BidangKedokteran, DatangTgl, DatangJam) VALUES(%s, %s, %s, %s, %s, %s)",('',idpasien,iddokter,bidang,tanggal,jam1))
-                con.commit()    
-                pesan(self, QMessageBox.Information,"Info","Kedatangan sudah di simpan")
+                pesan(self, QMessageBox.Information,"Info","Permintaan diluar waktu kerja dokter, mohon untuk memilih jam yang lain")
 
-                # ngetest smsnya jangan banyak banyak ya bang, terbatas kuota API nya
-                isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd/MM/yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
-                # print(isisms)
-                apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
-                apisms_response = apisms.read()
-
-                # print(apisms) 
-
-            con.close()
-
-    except mdb.Error as e:
-        pesan(self,QMessageBox.Information,"Error","Failed")
+        except mdb.Error as e:
+            pesan(self,QMessageBox.Information,"Error","Failed")
+    else:
+        pesan(self,QMessageBox.Information,"Warning","you dont have authorisation, Please contact Admin")
 
 def Pasien(self):
-    # if (self.Lbl_UserRole.text()=='Admin'):
-    self.FrmPasien = QtWidgets.QMainWindow()
-    self.ui_pasien = Ui_FrmPasien()
-    self.ui_pasien.setupUi(self.FrmPasien)
-    self.ui_pasien.signals()
-    self.FrmPasien.show()
-    # else:
-    #     pesan(self,QMessageBox.Information,"Warning","you dont have authorisation, Please contact Admin")
+    # print(self.Lbl_CurrentUser.text())
+    if (self.Lbl_CurrentUser.text()!="Guest"):
+        self.FrmPasien = QtWidgets.QMainWindow()
+        self.ui_pasien = Ui_FrmPasien()
+        self.ui_pasien.setupUi(self.FrmPasien)
+        self.ui_pasien.signals()
+        self.FrmPasien.show()
+    else:
+        pesan(self,QMessageBox.Information,"Warning","you dont have authorization, Please contact Admin")
 
 def Dokter(self):
     if (self.Lbl_UserRole.text()=='Admin'):
@@ -361,7 +360,7 @@ def Dokter(self):
         self.ui_dokter.signals()
         self.FrmDokter.show()
     else:
-        pesan(self,QMessageBox.Information,"Warning","you dont have authorisation, Please contact Admin")
+        pesan(self,QMessageBox.Information,"Warning","you dont have authorization, Please contact Admin")
 
 def User(self):
     if (self.Lbl_UserRole.text()=='Admin'):
@@ -371,10 +370,16 @@ def User(self):
         self.ui_user.signals()
         self.FrmUser.show()
     else:
-        pesan(self,QMessageBox.Information,"Warning","you dont have authorisation, Please contact Admin")
+        pesan(self,QMessageBox.Information,"Warning","you dont have authorization, Please contact Admin")
 
 def Login(self):
     FrmLogin.show()
+
+def show_hide_pass(self):
+    if self.Chk_show_pass.checkState() == Qt.Checked:
+        self.Txt_password.setEchoMode(QLineEdit.Normal)
+    else:
+        self.Txt_password.setEchoMode(QLineEdit.Password)
 
 def Logout(self):
     self.Lbl_CurrentUser.setText("Guest")
@@ -396,15 +401,19 @@ def handleResponse(self, reply):
             pesan(self,QMessageBox.Information,"Warning","GAGAL !!")
 
 def scheduling():
+    from datetime import timedelta
+
     global iddokter
 
     bidang=["Dokter Umum", "Kandungan", "Anak", "Penyakit Dalam", "Bedah"]
 
-    today = datetime.date.today()
-    # today = datetime.today()
+    
+    today = datetime.today()
     print(today)
-    tomorrow = today + datetime.timedelta(days = 1) 
- 
+    tomorrow = today + timedelta(days = 1)
+    tomorrow = tomorrow.strftime("%Y-%m-%d")
+    print(tomorrow)
+
     con = mdb.connect('localhost','root','','ltp_final_project1_db')
 
     for i in range(0, 5):
@@ -449,6 +458,7 @@ def scheduling():
 
 Ui_FrmLogin.signals=login_signals
 Ui_FrmLogin.login = login
+Ui_FrmLogin.show_hide_pass=show_hide_pass
 
 Ui_FrmPendaftaran.signals=signals
 Ui_FrmPendaftaran.Cari=Cari
@@ -463,6 +473,7 @@ Ui_FrmPendaftaran.Logout=Logout
 Ui_FrmPendaftaran.scheduling=scheduling
 Ui_FrmPendaftaran.handleResponse=handleResponse
 
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     FrmPendaftaran = QtWidgets.QMainWindow()
@@ -475,11 +486,10 @@ if __name__ == "__main__":
     ui_login = Ui_FrmLogin()
     ui_login.setupUi(FrmLogin)
     ui_login.signals()
-    # FrmLogin.show()
-    
+        
     scheduler = BackgroundScheduler()
     
-    scheduler.add_job(scheduling, 'interval', seconds=30)
+    scheduler.add_job(scheduling, 'interval', seconds=10)
     # scheduler.add_job(scheduling, 'interval', minutes=1)
     # scheduler.add_job(scheduling, 'cron', day_of_week='mon-sun', hour='18', minute="56", second="*/4")
     scheduler.start()

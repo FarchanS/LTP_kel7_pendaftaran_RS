@@ -51,6 +51,7 @@ class Ui_FrmUser(object):
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.passwordLabel)
         self.Txt_password = QtWidgets.QLineEdit(self.formLayoutWidget)
         self.Txt_password.setObjectName("Txt_password")
+        self.Txt_password.setEchoMode(QtWidgets.QLineEdit.Password)
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.Txt_password)
         self.roleLabel = QtWidgets.QLabel(self.formLayoutWidget)
         self.roleLabel.setObjectName("roleLabel")

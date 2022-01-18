@@ -95,7 +95,7 @@ def select_data(self):
             self.Cmb_role.setCurrentText("")
         else:
             self.Txt_nama.setText(result[0][1])
-            #self.Txt_password.setText(result[0][2])
+            self.Txt_password.setText(result[0][2])
             self.Cmb_role.setCurrentText(result[0][3])
         
     except mdb.Error as e:

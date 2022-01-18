@@ -91,7 +91,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>USER</string>
+      <string>Guest</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
