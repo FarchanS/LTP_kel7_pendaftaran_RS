@@ -17,11 +17,8 @@ from FrmUser import *
 from FrmUser_prog import *
 from FrmLogin import *
 from datetime import datetime
-
 from apscheduler.schedulers.background import BackgroundScheduler
 import hashlib
-# import datetime
-# from datetime import timedelta
 
 a=1
 b=0
@@ -253,14 +250,10 @@ def Submit(self):
 
     if (self.Lbl_CurrentUser.text()!="Guest"):
         tanggal=self.Cal_TanggalDatang.selectedDate().toPyDate()
-        # tanggalan=self.Cal_TanggalDatang.selectedDate().toString("dd-MM-yyyy")
         jam=self.TimeDatang.time().toString("HH")
         jam1=self.TimeDatang.time().toString("HH:mm")
         bidang=self.Cmb_Bidang.currentText()
  
-        # print(jam1)
-        # print(jam)
-        
         tahun=self.Cal_TanggalDatang.selectedDate().toString("yyyy")
         bulan=self.Cal_TanggalDatang.selectedDate().toString("MM")
         tgl=self.Cal_TanggalDatang.selectedDate().toString("dd")
@@ -269,15 +262,12 @@ def Submit(self):
 
         date = datetime.strptime(date_string, "%Y, %m, %d")
         hari=date.weekday()
-        # print("hari: " + str(hari))
         b=0
         
         if hari == 0:
             jam_min = self.Time1_Buka.time().toString("HH:mm")
             jam_max = self.Time1_Tutup.time().toString("HH:mm")
         elif hari == 1:
-            # jam_min = self.Time2_Buka.time().toString("HH")
-            # jam_max = self.Time2_Tutup.time().toString("HH")
             jam_min = self.Time2_Buka.time().toString("HH:mm")
             jam_max = self.Time2_Tutup.time().toString("HH:mm")
         elif hari == 2:
@@ -296,27 +286,17 @@ def Submit(self):
             jam_min = self.Time7_Buka.time().toString("HH:mm")
             jam_max = self.Time7_Tutup.time().toString("HH:mm")
         
-        # print("jam max: " + str(jam_max))
-        # print("jam min: " + str(jam_min))
-        # print("jam : " + str(jam))
-        
         if ((jam1<jam_min) or (jam1>=jam_max)):
                 b=1
         
-        # print("b: " + str(b))
-
         try:
             if (b==0):
-                # print("b=0 masuk")
-                # print("kapasitas: " + str(kapasitas))
 
                 con = mdb.connect('localhost','root','','ltp_final_project1_db')
                 
                 cur = con.cursor()
-                # cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE IdDokter = %s AND HOUR(DatangJam) = %s AND DatangTgl = %s", (iddokter, jam, date))
                 cur.execute("SELECT COUNT(KTP) FROM kedatangan WHERE IdDokter = %s AND DatangTgl = %s AND HOUR(DatangJam) = %s",(iddokter, date, jam))
                 result = cur.fetchall()
-                # print(result)
 
                 if result[0][0] >= kapasitas:
                     pesan(self, QMessageBox.Information,"Info","Antrian melebihi kapasitas, mohon untuk memilih hari yang lain")
@@ -325,12 +305,12 @@ def Submit(self):
                     con.commit()    
                     pesan(self, QMessageBox.Information,"Info","Kedatangan sudah di simpan")
 
-                    # isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd/MM/yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
-                    # # print(isisms)
-                    # apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
-                    # apisms_response = apisms.read()
+                    isisms = 'Pasien yth, anda terdaftar akan mengunjungi dr. '+self.Cmb_NamaDr.currentText()+', pada tanggal ' + self.Cal_TanggalDatang.selectedDate().toString("dd/MM/yyyy") + ' jam ' + self.TimeDatang.time().toString("HH:mm")+ '. Mohon datang 1 jam sebelum jadwal. Terima kasih.'
+                    # print(isisms)
+                    apisms = urllib.request.urlopen('https://websms.co.id/api/smsgateway?token=93916b1da58f544ddf99a2d3511117d3&to='+self.Txt_Phone.text()+'&msg=' +urllib.parse.quote_plus(isisms))
+                    apisms_response = apisms.read()
 
-                    # print(apisms) 
+                    print(apisms) 
 
                 con.close()
             else:
@@ -453,6 +433,7 @@ def scheduling():
         telegram_response = telegramchat.read()
 
         print(url)
+        print('send')
 
     con.close()
 
@@ -489,7 +470,7 @@ if __name__ == "__main__":
         
     scheduler = BackgroundScheduler()
     
-    scheduler.add_job(scheduling, 'interval', seconds=10)
+    scheduler.add_job(scheduling, 'interval', seconds=60)
     # scheduler.add_job(scheduling, 'interval', minutes=1)
     # scheduler.add_job(scheduling, 'cron', day_of_week='mon-sun', hour='18', minute="56", second="*/4")
     scheduler.start()
